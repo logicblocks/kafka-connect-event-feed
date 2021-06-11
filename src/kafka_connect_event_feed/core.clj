@@ -1,1 +1,6 @@
-(ns kafka-connect-event-feed.core)
+(ns kafka-connect-event-feed.core
+  (:import
+   [org.apache.kafka.connect.source SourceConnector
+                                    SourceTask]))
+
+(SourceConnector. )

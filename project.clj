@@ -17,17 +17,19 @@
             [jonase/eastwood "0.3.11"]]
 
   :profiles
-  {:shared
-   {:dependencies [[org.clojure/clojure "1.10.1"]
-                   [nrepl "0.7.0"]
-                   [eftest "0.5.9"]]
+  {:provided
+   {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
+   :shared
+   {:dependencies   [[org.clojure/clojure "1.10.1"]
+                     [nrepl "0.7.0"]
+                     [eftest "0.5.9"]]
     :resource-paths ["test_resources"]}
-   :dev
+             :dev
    [:shared {:source-paths ["dev"]
              :eftest       {:multithread? false}}]
-   :test
+             :test
    [:shared {:eftest {:multithread? false}}]
-   :prerelease
+             :prerelease
    {:release-tasks
     [["shell" "git" "diff" "--exit-code"]
      ["change" "version" "leiningen.release/bump-version" "rc"]
@@ -35,7 +37,7 @@
      ["vcs" "commit" "Pre-release version %s [skip ci]"]
      ["vcs" "tag"]
      ["deploy"]]}
-   :release
+             :release
    {:release-tasks
     [["shell" "git" "diff" "--exit-code"]
      ["change" "version" "leiningen.release/bump-version" "release"]
