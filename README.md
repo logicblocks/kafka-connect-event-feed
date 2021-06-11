@@ -1,8 +1,8 @@
-# kafka-connect-event-feed
+# kafka.connect.event-feed
 
-[![Clojars Project](https://img.shields.io/clojars/v/io.logicblocks/kafka-connect-event-feed.svg)](https://clojars.org/io.logicblocks/kafka-connect-event-feed)
-[![Clojars Downloads](https://img.shields.io/clojars/dt/io.logicblocks/kafka-connect-event-feed.svg)](https://clojars.org/io.logicblocks/kafka-connect-event-feed)
-[![GitHub Contributors](https://img.shields.io/github/contributors-anon/logicblocks/kafka-connect-event-feed.svg)](https://github.com/logicblocks/kafka-connect-event-feed/graphs/contributors)
+[![Clojars Project](https://img.shields.io/clojars/v/io.logicblocks/kafka.connect.event-feed.svg)](https://clojars.org/io.logicblocks/kafka.connect.event-feed)
+[![Clojars Downloads](https://img.shields.io/clojars/dt/io.logicblocks/kafka.connect.event-feed.svg)](https://clojars.org/io.logicblocks/kafka.connect.event-feed)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/logicblocks/kafka.connect.event-feed.svg)](https://github.com/logicblocks/kafka.connect.event-feed/graphs/contributors)
 
 A Kafka Connect connector to read a HAL based event feed resource.
 
@@ -11,7 +11,7 @@ A Kafka Connect connector to read a HAL based event feed resource.
 Add the following to your `project.clj` file:
 
 ```clj
-[io.logicblocks/kafka-connect-event-feed "0.0.1"]
+[io.logicblocks/kafka.connect.event-feed "0.0.1"]
 ```
 
 ## Documentation

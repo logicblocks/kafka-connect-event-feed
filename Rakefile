@@ -44,7 +44,7 @@ namespace :keys do
         name_prefix: 'gpg',
         owner_name: 'LogicBlocks Maintainers',
         owner_email: 'maintainers@logicblocks.io',
-        owner_comment: 'kafka-connect-event-feed CI Key'
+        owner_comment: 'kafka.connect.event-feed CI Key'
       )
     end
 
@@ -62,7 +62,7 @@ end
 
 RakeCircleCI.define_project_tasks(
     namespace: :circle_ci,
-    project_slug: 'github/logicblocks/kafka-connect-event-feed'
+    project_slug: 'github/logicblocks/kafka.connect.event-feed'
 ) do |t|
   circle_ci_config =
     YAML.load_file('config/secrets/circle_ci/config.yaml')
@@ -84,7 +84,7 @@ end
 
 RakeGithub.define_repository_tasks(
     namespace: :github,
-    repository: 'logicblocks/kafka-connect-event-feed',
+    repository: 'logicblocks/kafka.connect.event-feed',
 ) do |t|
   github_config =
     YAML.load_file('config/secrets/github/config.yaml')

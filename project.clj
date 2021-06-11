@@ -1,6 +1,6 @@
-(defproject io.logicblocks/kafka-connect-event-feed "0.1.2-RC1"
+(defproject io.logicblocks/kafka.connect.event-feed "0.0.1-RC1"
   :description "A Kafka Connect connector to read a HAL based event feed resource."
-  :url "https://github.com/logicblocks/kafka-connect-event-feed"
+  :url "https://github.com/logicblocks/kafka.connect.event-feed"
 
   :license {:name "The MIT License"
             :url  "https://opensource.org/licenses/MIT"}
@@ -64,11 +64,11 @@
   {:ns-exclude-regex [#"^user"]}
 
   :codox
-  {:namespaces  [#"^kafka-connect-event-feed"]
+  {:namespaces  [#"^kafka\.connect\.event-feed"]
    :metadata    {:doc/format :markdown}
    :output-path "docs"
    :doc-paths   ["docs"]
-   :source-uri  "https://github.com/logicblocks/kafka-connect-event-feed/blob/{version}/{filepath}#L{line}"}
+   :source-uri  "https://github.com/logicblocks/kafka.connect.event-feed/blob/{version}/{filepath}#L{line}"}
 
   :cljfmt {:indents ^:replace {#".*" [[:inner 0]]}}
 
