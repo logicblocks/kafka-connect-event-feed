@@ -16,13 +16,16 @@
             [lein-bikeshed "0.5.2"]
             [jonase/eastwood "0.3.11"]]
 
+  :dependencies [[halboy "5.1.1"]]
+
   :profiles
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
    :shared
    {:dependencies   [[org.clojure/clojure "1.10.1"]
                      [nrepl "0.7.0"]
-                     [eftest "0.5.9"]]
+                     [eftest "0.5.9"]
+                     [http-kit.fake "0.2.2"]]
     :resource-paths ["test_resources"]
     :aot            :all}
    :dev

@@ -1,0 +1,36 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/events?pick=1"
+    },
+    "events": [
+      {
+        "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/events/f7680326-50f3-11eb-81ea-0a261fcdc66c"
+      }
+    ],
+    "next": {
+      "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/events?pick=1&since=f7680326-50f3-11eb-81ea-0a261fcdc66c",
+    },
+    "discovery": {
+      "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/"
+    }
+  },
+  "_embedded": {
+    "events": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/events/f7680326-50f3-11eb-81ea-0a261fcdc66c"
+          },
+          "appointment": {
+            "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/appointments/fcd4b962-2da7-11eb-a7a2-0242ac110003"
+          }
+        },
+        "id": "mrn1:::event/f7680326-50f3-11eb-81ea-0a261fcdc66c",
+        "type": "appointment-confirmed",
+        "createdAt": "2021-01-07T14:23:52.000Z",
+        "appointmentId": "mrn1:::appointment/fcd4b962-2da7-11eb-a7a2-0242ac110003"
+      }
+    ]
+  }
+}

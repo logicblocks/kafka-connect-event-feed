@@ -1,0 +1,8 @@
+{
+  "_links": {
+    "events": {
+      "href": "https://appointment-service-flerovium.mypulse-staging-mendelevium.mypulse.technology/events?pick={pick}&since={since}",
+      "templated": true
+    }
+  }
+}
