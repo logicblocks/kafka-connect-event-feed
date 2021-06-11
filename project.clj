@@ -22,12 +22,12 @@
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
    :shared
-   {:dependencies   [[org.clojure/clojure "1.10.1"]
-                     [nrepl "0.7.0"]
-                     [eftest "0.5.9"]
-                     [http-kit.fake "0.2.2"]]
-    :resource-paths ["test_resources"]
-    :aot            :all}
+   [:provided {:dependencies   [[org.clojure/clojure "1.10.1"]
+                                [nrepl "0.7.0"]
+                                [eftest "0.5.9"]
+                                [http-kit.fake "0.2.2"]]
+               :resource-paths ["test_resources"]
+               :aot            :all}]
    :dev
    [:shared {:source-paths ["dev"]
              :eftest       {:multithread? false}}]
