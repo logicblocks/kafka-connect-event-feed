@@ -1,6 +1,7 @@
 require 'rake_circle_ci'
 require 'rake_docker'
 require 'rake_github'
+require 'rake_gpg'
 require 'rake_leiningen'
 require 'rake_ssh'
 require 'yaml'
@@ -20,7 +21,7 @@ namespace :encryption do
 
   namespace :passphrase do
     desc 'Generate encryption passphrase for CI GPG key'
-    task generate: ["directory:ensure"]
+    task generate: ["directory:ensure"] do
       File.open('config/secrets/ci/encryption.passphrase', 'w') do |f|
         f.write(SecureRandom.base64(36))
       end
