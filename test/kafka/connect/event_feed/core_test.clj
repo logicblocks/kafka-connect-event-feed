@@ -1,4 +1,4 @@
-(ns kafka-connect-event-feed.core-test
+(ns kafka.connect.event-feed.core-test
   (:require
    [clojure.test :refer :all]
 
@@ -7,12 +7,11 @@
    [halboy.resource :as hal]
    [halboy.json :as hal-json])
   (:import
-   [org.apache.kafka.connect.source SourceTask]
-   [kafka_connect_event_feed EventFeedSourceTask]))
+   [io.logicblocks.kafka.connect.eventfeed SourceTask]))
 
 (deftest creates-valid-source-task
-  (let [task (EventFeedSourceTask.)]
-    (is (instance? SourceTask task))))
+  (let [task (SourceTask.)]
+    (is (instance? org.apache.kafka.connect.source.SourceTask task))))
 
 ; a page with no events will not have a next link
 ; a page with no events will have an empty array for embedded events?
@@ -27,7 +26,7 @@
 ;   on page as since offset
 
 (deftest returns-empty-list-when-no-events-in-feed
-  (let [task (EventFeedSourceTask.)
+  (let [task (SourceTask.)
         records (.poll task)
 
         no-events-resource
@@ -36,4 +35,4 @@
                      (hal-json/resource->json no-events-resource)]
       (is (empty? records)))))
 
-#_(compile 'kafka-connect-event-feed.task)
+(compile 'kafka.connect.event-feed.task)
