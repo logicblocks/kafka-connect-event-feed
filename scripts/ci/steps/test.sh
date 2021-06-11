@@ -11,4 +11,4 @@ cd "$PROJECT_DIR"
 
 env
 
-./go library:test:integration
+./go library:test:unit
