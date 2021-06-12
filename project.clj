@@ -22,8 +22,9 @@
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
    :shared
-   [:provided {:dependencies   [[org.clojure/clojure "1.10.1"]
-                                [nrepl "0.7.0"]
+   [:provided {:dependencies   [[org.clojure/clojure "1.10.3"]
+                                [org.slf4j/slf4j-nop "1.7.30"]
+                                [nrepl "0.8.3"]
                                 [eftest "0.5.9"]
                                 [http-kit.fake "0.2.2"]]
                :resource-paths ["test_resources"]
