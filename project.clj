@@ -9,6 +9,7 @@
             [lein-shell "0.5.0"]
             [lein-ancient "0.6.15"]
             [lein-changelog "0.3.2"]
+            [lein-cprint "1.3.3"]
             [lein-eftest "0.5.9"]
             [lein-codox "0.10.7"]
             [lein-cljfmt "0.6.7"]
@@ -16,24 +17,43 @@
             [lein-bikeshed "0.5.2"]
             [jonase/eastwood "0.3.11"]]
 
-  :dependencies [[halboy "5.1.1"]]
+  :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.clojure/tools.logging "1.1.0"]
+
+                 [halboy "5.1.1"]]
 
   :profiles
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
    :shared
-   [:provided {:dependencies   [[org.clojure/clojure "1.10.3"]
-                                [org.slf4j/slf4j-nop "1.7.30"]
+   [:provided {:dependencies   [[org.clojure/test.check "1.1.0"]
+
                                 [nrepl "0.8.3"]
                                 [eftest "0.5.9"]
+
                                 [http-kit.fake "0.2.2"]]
-               :resource-paths ["test_resources"]
-               :aot            :all}]
-   :dev
-   [:shared {:source-paths ["dev"]
+               :aot            :all
+               :resource-paths ["test-resources"]}]
+   :unit
+   [:shared {:test-paths ^:replace ["test/shared"
+                                    "test/unit"]}]
+   :integration
+   [:shared {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.30"]
+                            [org.slf4j/jul-to-slf4j "1.7.30"]
+                            [org.slf4j/log4j-over-slf4j "1.7.30"]
+                            [ch.qos.logback/logback-classic "1.2.3"]
+
+                            [io.logicblocks/kafka.testing "0.0.2"]
+                            [fundingcircle/jackdaw "0.8.0"]
+                            [org.sourcelab/kafka-connect-client "3.1.1"]
+                            [kelveden/clj-wiremock "1.7.0"]]
+             :test-paths   ^:replace ["test/shared"
+                                      "test/integration"]
              :eftest       {:multithread? false}}]
-   :test
-   [:shared {:eftest {:multithread? false}}]
+   :dev
+   [:unit :integration {:test-paths ^:replace ["test/shared"
+                                               "test/unit"
+                                               "test/integration"]}]
    :prerelease
    {:release-tasks
     [["shell" "git" "diff" "--exit-code"]
@@ -61,6 +81,11 @@
      ["vcs" "tag"]
      ["vcs" "push"]]}}
 
+  :target-path "target/%s/"
+  :test-paths ["test/shared"
+               "test/unit"
+               "test/integration"]
+
   :cloverage
   {:ns-exclude-regex [#"^user"]}
 
@@ -77,4 +102,8 @@
 
   :deploy-repositories
   {"releases"  {:url "https://repo.clojars.org" :creds :gpg}
-   "snapshots" {:url "https://repo.clojars.org" :creds :gpg}})
+   "snapshots" {:url "https://repo.clojars.org" :creds :gpg}}
+
+  :aliases {"test" ["do"
+                    ["with-profile" "unit" "eftest" ":all"]
+                    ["with-profile" "integration" "eftest" ":all"]]})
