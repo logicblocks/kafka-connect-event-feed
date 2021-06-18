@@ -6,7 +6,7 @@ require 'rake_leiningen'
 require 'rake_ssh'
 require 'yaml'
 
-task :default => [:'library:check', :'library:test:unit']
+task :default => [:'library:check', :'library:test:all']
 
 RakeLeiningen.define_installation_tasks(
   version: '2.9.1'
@@ -119,6 +119,14 @@ namespace :library do
       type: 'unit',
       profile: 'unit'
     )
+
+    RakeLeiningen.define_test_task(
+      name: :integration,
+      type: 'integration',
+      profile: 'integration'
+    )
+
+    task all: %w[unit integration]
   end
 
   namespace :publish do
