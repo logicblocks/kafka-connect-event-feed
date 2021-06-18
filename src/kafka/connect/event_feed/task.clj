@@ -42,14 +42,15 @@
         discovery-navigator (halnav/discover event-feed-discovery-url)
         events-navigator (halnav/get discovery-navigator :events)
         events-resource (halnav/resource events-navigator)
-        event (first (hal/get-resource events-resource :events))
+        events (hal/get-resource events-resource :events)
 
-        record (efr/source-record
-                 :offset nil
-                 :topic-name topic-name
-                 :key nil
-                 :value (haljson/resource->map event))]
-    (ArrayList. ^Collection [record])))
+        records (map #(efr/source-record
+                        :offset nil
+                        :topic-name topic-name
+                        :key nil
+                        :value (haljson/resource->map %))
+                  events)]
+    (ArrayList. ^Collection records)))
 
 (defn -version [_]
   "0.0.1")
