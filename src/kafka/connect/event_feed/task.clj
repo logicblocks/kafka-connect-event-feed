@@ -44,11 +44,12 @@
         events-resource (halnav/resource events-navigator)
         events (hal/get-resource events-resource :events)
 
-        records (map #(efr/source-record
-                        :offset nil
-                        :topic-name topic-name
-                        :key nil
-                        :value (haljson/resource->map %))
+        records (map
+                  #(efr/source-record
+                     :offset nil
+                     :topic-name topic-name
+                     :key nil
+                     :value (haljson/resource->map %))
                   events)]
     (ArrayList. ^Collection records)))
 
