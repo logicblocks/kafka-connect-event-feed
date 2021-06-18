@@ -16,7 +16,7 @@
              value-serde]
       :or   {interval-ms     100
              max-attempts    50
-             poll-timeout-ms 100
+             poll-timeout-ms 5000
              key-serde       (json-serdes/serde)
              value-serde     (json-serdes/serde)}}]
   (let [group-id (data/random-uuid)
@@ -35,12 +35,8 @@
                      " to consume from topic " topic-name
                      " within " (* interval-ms max-attempts) " ms.")))
           (if (condition)
-            (do
-              (let [messages (jc/poll consumer
-                               (Duration/ofMillis poll-timeout-ms))]
-                (clojure.pprint/pprint "Polling!")
-                (clojure.pprint/pprint messages)
-                messages))
+            (jc/poll consumer
+              (Duration/ofMillis poll-timeout-ms))
             (do
               (Thread/sleep interval-ms)
               (recur (+ attempt 1)))))))))
@@ -54,7 +50,7 @@
              value-serde]
       :or   {interval-ms     100
              max-attempts    50
-             poll-timeout-ms 100
+             poll-timeout-ms 5000
              key-serde       (json-serdes/serde)
              value-serde     (json-serdes/serde)}}]
   (let [group-id (data/random-uuid)
