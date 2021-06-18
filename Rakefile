@@ -22,7 +22,7 @@ namespace :encryption do
 
   namespace :passphrase do
     desc 'Generate encryption passphrase for CI GPG key'
-    task generate: ["directory:ensure"] do
+    task generate: ['directory:ensure'] do
       File.open('config/secrets/ci/encryption.passphrase', 'w') do |f|
         f.write(SecureRandom.base64(36))
       end
@@ -84,8 +84,8 @@ RakeCircleCI.define_project_tasks(
 end
 
 RakeGithub.define_repository_tasks(
-    namespace: :github,
-    repository: 'logicblocks/kafka.connect.event-feed',
+  namespace: :github,
+  repository: 'logicblocks/kafka.connect.event-feed'
 ) do |t|
   github_config =
     YAML.load_file('config/secrets/github/config.yaml')
@@ -115,18 +115,21 @@ namespace :library do
 
   namespace :test do
     RakeLeiningen.define_test_task(
-        name: :unit,
-        type: 'unit',
-        profile: 'test')
+      name: :unit,
+      type: 'unit',
+      profile: 'test'
+    )
   end
 
   namespace :publish do
     RakeLeiningen.define_release_task(
-        name: :prerelease,
-        profile: 'prerelease')
+      name: :prerelease,
+      profile: 'prerelease'
+    )
 
     RakeLeiningen.define_release_task(
-        name: :release,
-        profile: 'release')
+      name: :release,
+      profile: 'release'
+    )
   end
 end
