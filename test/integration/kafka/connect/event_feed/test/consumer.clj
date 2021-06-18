@@ -7,14 +7,52 @@
    [kafka.connect.event-feed.test.data :as data])
   (:import [java.time Duration]))
 
-(defn consume-n
-  [kafka topic-name n
-   & {:keys [max-attempts
-             interval-ms
+(defn consume-if
+  [kafka topic-name condition
+   & {:keys [interval-ms
+             max-attempts
              poll-timeout-ms
              key-serde
              value-serde]
-      :or   {interval-ms     50
+      :or   {interval-ms     100
+             max-attempts    50
+             poll-timeout-ms 100
+             key-serde       (json-serdes/serde)
+             value-serde     (json-serdes/serde)}}]
+  (let [group-id (data/random-uuid)
+        bootstrap-servers (ktb/bootstrap-servers kafka)]
+    (with-open [consumer (jc/subscribed-consumer
+                           {"bootstrap.servers" bootstrap-servers
+                            "group.id"          group-id}
+                           [{:topic-name  topic-name
+                             :key-serde   key-serde
+                             :value-serde value-serde}])]
+      (loop [attempt 0]
+        (if (= attempt max-attempts)
+          (throw (IllegalStateException.
+                   (str
+                     "Failed to meet condition"
+                     " to consume from topic " topic-name
+                     " within " (* interval-ms max-attempts) " ms.")))
+          (if (condition)
+            (do
+              (let [messages (jc/poll consumer
+                               (Duration/ofMillis poll-timeout-ms))]
+                (clojure.pprint/pprint "Polling!")
+                (clojure.pprint/pprint messages)
+                messages))
+            (do
+              (Thread/sleep interval-ms)
+              (recur (+ attempt 1)))))))))
+
+(defn consume-n
+  [kafka topic-name n
+   & {:keys [interval-ms
+             max-attempts
+             poll-timeout-ms
+             key-serde
+             value-serde]
+      :or   {interval-ms     100
              max-attempts    50
              poll-timeout-ms 100
              key-serde       (json-serdes/serde)

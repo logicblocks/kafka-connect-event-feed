@@ -34,6 +34,46 @@
      (kcc/add-connector client# (:name ~options) (:config ~options))
      ~@body))
 
+(deftest fetches-no-events-when-event-feed-empty
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+
+        topic-name "events"
+
+        discovery-href (wms/url wiremock-server "/")
+        discovery-resource
+        (-> (hal/new-resource discovery-href)
+          (hal/add-link :events
+            {:href      (wms/url wiremock-server "/events{?since,pick}")
+             :templated true}))
+
+        events-resource
+        (-> (hal/new-resource (wms/url wiremock-server "/events"))
+          (hal/add-href :discovery discovery-href)
+          (hal/add-link :events [])
+          (hal/add-resource :events []))]
+    (with-connector kafka-connect
+      {:name   "event-feed-source"
+       :config {"connector.class"         connector-class
+                "topic.name"              topic-name
+                "eventfeed.discovery.url" discovery-href}}
+      (wmc/with-stubs
+        [{:server wiremock-server
+          :req    [:GET "/"]
+          :res    [200 {:body (haljson/resource->json discovery-resource)}]}
+         {:server wiremock-server
+          :req    [:GET "/events"]
+          :res    [200 {:body (haljson/resource->json events-resource)}]}]
+        (let [messages
+              (test-consumer/consume-if kafka topic-name
+                (fn []
+                  (let [event-feed-gets
+                        (wmc/get-logged-requests
+                          :GET "/events" wiremock-server)]
+                    (>= (count event-feed-gets) 10))))]
+          (is (= 0 (count messages))))))))
+
 (deftest fetches-single-event-from-event-feed
   (let [kafka (ktc/kafka @kafka-atom)
         kafka-connect (ktc/kafka-connect @kafka-atom)
@@ -56,7 +96,7 @@
         (-> (hal/new-resource (wms/url wiremock-server "/events"))
           (hal/add-href :discovery discovery-href)
           (hal/add-href :events event-href)
-          (hal/add-resource :events event-resource))]
+          (hal/add-resource :events [event-resource]))]
     (with-connector kafka-connect
       {:name   "event-feed-source"
        :config {"connector.class"         connector-class
@@ -70,9 +110,14 @@
           :req    [:GET "/events"]
           :res    [200 {:body (haljson/resource->json events-resource)}]}]
         (let [messages (test-consumer/consume-n kafka topic-name 1)
-              message (first messages)]
-          (clojure.pprint/pprint message)
-          (is (= event-id message)))))))
+              message (first messages)
+              message-payload (get-in message [:value :payload])]
+          (is (= (haljson/resource->map event-resource)
+                message-payload)))))))
 
-(compile 'kafka.connect.event-feed.task)
-(compile 'kafka.connect.event-feed.connector)
+; full page
+; many pages
+
+(comment
+  (compile 'kafka.connect.event-feed.task)
+  (compile 'kafka.connect.event-feed.connector))

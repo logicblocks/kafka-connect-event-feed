@@ -1,0 +1,14 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://appointment-service-bismuth.mypulse-development-curium.mypulse.technology/events?pick=10"
+    },
+    "events": [],
+    "discovery": {
+      "href": "https://appointment-service-bismuth.mypulse-development-curium.mypulse.technology/"
+    }
+  },
+  "_embedded": {
+    "events": []
+  }
+}

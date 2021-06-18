@@ -18,6 +18,6 @@
     (offset-map offset)
     topic-name
     nil
-    key
+    (efu/clojure-data->java-data key)
     nil
-    value))
+    (efu/clojure-data->java-data value)))
