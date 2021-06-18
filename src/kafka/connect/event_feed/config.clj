@@ -28,14 +28,14 @@
    :width/medium ConfigDef$Width/MEDIUM
    :width/long   ConfigDef$Width/LONG})
 
-(defn config-type [key]
-  (get config-type-mapping key))
+(defn config-type [k]
+  (get config-type-mapping k))
 
-(defn config-importance [key]
-  (get config-importance-mapping key))
+(defn config-importance [k]
+  (get config-importance-mapping k))
 
-(defn config-width [key]
-  (get config-width-mapping key))
+(defn config-width [k]
+  (get config-width-mapping k))
 
 (defn- config-def []
   (ConfigDef.))

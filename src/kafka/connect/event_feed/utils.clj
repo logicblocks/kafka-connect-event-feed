@@ -3,13 +3,13 @@
    [clojure.walk :as w])
   (:import
    [java.util ArrayList
-              Collection
-              HashMap
-              HashSet
-              LinkedList
-              List
-              Map
-              Set]))
+    Collection
+    HashMap
+    HashSet
+    LinkedList
+    List
+    Map
+    Set]))
 
 (defn property-map->clojure-map [property-map]
   (w/keywordize-keys (into {} property-map)))

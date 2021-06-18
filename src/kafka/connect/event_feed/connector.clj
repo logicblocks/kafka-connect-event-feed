@@ -2,6 +2,7 @@
   (:require
    [clojure.tools.logging :as log]
 
+   [kafka.connect.event-feed.task]
    [kafka.connect.event-feed.logging]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.config :as efc])

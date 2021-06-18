@@ -5,8 +5,8 @@
    [kafka.connect.event-feed.logging]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.records :as efr])
-  (:import [java.util ArrayList Collection UUID]
-           [org.apache.kafka.connect.source SourceRecord])
+  (:import
+   [java.util ArrayList Collection UUID])
   (:gen-class
    :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceTask
    :extends org.apache.kafka.connect.source.SourceTask

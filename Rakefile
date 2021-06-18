@@ -117,7 +117,7 @@ namespace :library do
     RakeLeiningen.define_test_task(
       name: :unit,
       type: 'unit',
-      profile: 'test'
+      profile: 'unit'
     )
   end
 

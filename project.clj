@@ -28,6 +28,11 @@
    :shared
    [:provided {:dependencies   [[org.clojure/test.check "1.1.0"]
 
+                                [org.slf4j/jcl-over-slf4j "1.7.30"]
+                                [org.slf4j/jul-to-slf4j "1.7.30"]
+                                [org.slf4j/log4j-over-slf4j "1.7.30"]
+                                [ch.qos.logback/logback-classic "1.2.3"]
+
                                 [nrepl "0.8.3"]
                                 [eftest "0.5.9"]
 

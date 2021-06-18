@@ -2,10 +2,7 @@
   (:require
    [clojure.test :refer :all]
 
-   [org.httpkit.fake :refer [with-fake-http]]
-
-   [halboy.resource :as hal]
-   [halboy.json :as hal-json])
+   [org.httpkit.fake :refer [with-fake-http]])
   (:import
    [org.apache.kafka.connect.source SourceTask]
    [io.logicblocks.kafka.connect.eventfeed EventFeedSourceTask]))
@@ -26,14 +23,5 @@
 ; alternatively, use max events per poll as page size and use ID of last event
 ;   on page as since offset
 
-(deftest returns-empty-list-when-no-events-in-feed
-  (let [task (EventFeedSourceTask.)
-        records (.poll task)
-
-        no-events-resource
-        (hal/new-resource "http://example.com/events")]
-    (with-fake-http ["http://example.com/events"
-                     (hal-json/resource->json no-events-resource)]
-      (is (empty? records)))))
-
-(compile 'kafka.connect.event-feed.task)
+(comment
+  (compile 'kafka.connect.event-feed.task))
