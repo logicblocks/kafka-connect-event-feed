@@ -9,7 +9,8 @@ require 'yaml'
 task :default => [:'library:check', :'library:test:unit']
 
 RakeLeiningen.define_installation_tasks(
-    version: '2.9.1')
+  version: '2.9.1'
+)
 
 namespace :encryption do
   namespace :directory do
