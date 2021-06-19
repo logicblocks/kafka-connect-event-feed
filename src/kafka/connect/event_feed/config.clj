@@ -68,4 +68,10 @@
       :type :type/string
       :importance :importance/high
       :documentation (str "The URL of the discovery resource of the API that "
-                       "exposes an event feed."))))
+                       "exposes an event feed."))
+    (define
+      :name "eventfeed.pick"
+      :type :type/int
+      :importance :importance/medium
+      :documentation (str "The number of events to request in each request to "
+                       "the event feed."))))

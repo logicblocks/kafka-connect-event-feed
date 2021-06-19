@@ -1,11 +1,28 @@
 (ns kafka.connect.client.core
   (:require
-   [kafka.connect.event-feed.utils :as efu])
+    [clojure.walk :as w]
+
+    [kafka.connect.event-feed.utils :as efu])
   (:import
-   [org.sourcelab.kafka.connect.apiclient
-    Configuration
-    KafkaConnectClient]
-   [org.sourcelab.kafka.connect.apiclient.request.dto NewConnectorDefinition]))
+    [java.util HashMap Map]
+    [org.sourcelab.kafka.connect.apiclient
+     Configuration
+     KafkaConnectClient]
+    [org.sourcelab.kafka.connect.apiclient.request.dto
+     NewConnectorDefinition]))
+
+(defn clojure-value->property-value [x]
+  (cond
+    (keyword? x) (name x)
+    :else (str x)))
+
+(defn clojure-map->property-map [clojure-map]
+  (HashMap. ^Map
+    (let [f (fn [[k v]]
+              [(name k) (clojure-value->property-value v)])]
+      (w/postwalk
+        (fn [x] (if (map? x) (into {} (map f x)) x))
+        clojure-map))))
 
 (defn- configuration [{:keys [url]}]
   (Configuration. url))
@@ -23,4 +40,4 @@
   (.addConnector client
     (NewConnectorDefinition.
       (name connector-name)
-      (efu/clojure-data->java-data config))))
+      (clojure-map->property-map config))))

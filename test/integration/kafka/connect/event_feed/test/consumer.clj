@@ -8,12 +8,6 @@
    [kafka.connect.event-feed.test.data :as data])
   (:import [java.time Duration]))
 
-(defn- subscribed-consumer [options topic-configs]
-  (jc/subscribed-consumer
-    #_(efu/clojure-data->java-data options)
-    options
-    topic-configs))
-
 (defn consume-if
   [kafka topic-name condition
    & {:keys [interval-ms
@@ -28,7 +22,7 @@
              value-serde     (json-serdes/serde)}}]
   (let [group-id (data/random-uuid)
         bootstrap-servers (ktb/bootstrap-servers kafka)]
-    (with-open [consumer (subscribed-consumer
+    (with-open [consumer (jc/subscribed-consumer
                            {:bootstrap.servers bootstrap-servers
                             :group.id          group-id}
                            [{:topic-name  (name topic-name)
@@ -62,7 +56,7 @@
              value-serde     (json-serdes/serde)}}]
   (let [group-id (data/random-uuid)
         bootstrap-servers (ktb/bootstrap-servers kafka)]
-    (with-open [consumer (subscribed-consumer
+    (with-open [consumer (jc/subscribed-consumer
                            {:bootstrap.servers bootstrap-servers
                             :group.id          group-id}
                            [{:topic-name  (name topic-name)

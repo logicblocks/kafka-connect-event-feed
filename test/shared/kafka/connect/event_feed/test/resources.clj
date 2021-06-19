@@ -49,9 +49,11 @@
 
 (defn events-resource
   ([base-url]
-   (events-resource base-url []))
-  ([base-url event-resources]
-   (-> (hal/new-resource (events-href base-url))
+   (events-resource base-url {} []))
+  ([base-url parameters]
+   (events-resource base-url parameters []))
+  ([base-url parameters event-resources]
+   (-> (hal/new-resource (events-href base-url parameters))
      (hal/add-href :discovery (discovery-href base-url))
      (hal/add-link :events
        (map (fn [event-resource]

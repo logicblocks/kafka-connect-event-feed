@@ -14,10 +14,12 @@
                    (haljson/resource->json
                      (tr/discovery-resource wiremock-url))}]}))
 
-(defn events-resource [wiremock-server & {:keys [event-resources]}]
+(defn events-resource
+  [wiremock-server & {:keys [parameters event-resources]}]
   (let [wiremock-url (wmu/base-url wiremock-server)]
     {:server wiremock-server
-     :req    [:GET (tr/events-path)]
+     :req    [:GET (tr/events-path parameters)]
      :res    [200 {:body
                    (haljson/resource->json
-                     (tr/events-resource wiremock-url event-resources))}]}))
+                     (tr/events-resource wiremock-url
+                       parameters event-resources))}]}))
