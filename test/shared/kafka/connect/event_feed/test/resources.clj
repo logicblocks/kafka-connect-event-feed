@@ -1,13 +1,13 @@
 (ns kafka.connect.event-feed.test.resources
   (:require
-    [clojure.walk :as w]
+   [clojure.walk :as w]
 
-    [halboy.resource :as hal]
+   [halboy.resource :as hal]
 
-    [camel-snake-kebab.core :as csk]
-    [camel-snake-kebab.extras :as cske]
+   [camel-snake-kebab.core :as csk]
+   [camel-snake-kebab.extras :as cske]
 
-    [uritemplate-clj.core :as uritmpl]))
+   [uritemplate-clj.core :as uritmpl]))
 
 (defn populate [uri-template params]
   (let [params (cske/transform-keys csk/->camelCaseString params)]

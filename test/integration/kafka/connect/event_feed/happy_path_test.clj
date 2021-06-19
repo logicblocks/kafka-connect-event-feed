@@ -1,23 +1,23 @@
 (ns kafka.connect.event-feed.happy-path-test
   (:require
-    [clojure.test :refer :all]
+   [clojure.test :refer :all]
 
-    [halboy.json :as haljson]
+   [halboy.json :as haljson]
 
-    [clj-wiremock.fixtures :as wmf]
-    [clj-wiremock.core :as wmc]
-    [clj-wiremock.utils :as wmu]
+   [clj-wiremock.fixtures :as wmf]
+   [clj-wiremock.core :as wmc]
+   [clj-wiremock.utils :as wmu]
 
-    [kafka.testing.combined :as ktc]
-    [kafka.testing.connect :as ktkc]
+   [kafka.testing.combined :as ktc]
+   [kafka.testing.connect :as ktkc]
 
-    [kafka.connect.client.core :as kcc]
+   [kafka.connect.client.core :as kcc]
 
-    [kafka.connect.event-feed.test.logging]
-    [kafka.connect.event-feed.test.resources :as tr]
-    [kafka.connect.event-feed.test.consumer :as tc]
-    [kafka.connect.event-feed.test.stubs :as ts]
-    [kafka.connect.event-feed.test.data :as td]))
+   [kafka.connect.event-feed.test.logging]
+   [kafka.connect.event-feed.test.resources :as tr]
+   [kafka.connect.event-feed.test.consumer :as tc]
+   [kafka.connect.event-feed.test.stubs :as ts]
+   [kafka.connect.event-feed.test.data :as td]))
 
 (def connector-class
   "io.logicblocks.kafka.connect.eventfeed.EventFeedSourceConnector")

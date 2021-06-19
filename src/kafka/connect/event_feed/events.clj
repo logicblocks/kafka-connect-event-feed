@@ -1,10 +1,10 @@
 (ns kafka.connect.event-feed.events
   (:require
-    [halboy.navigator :as halnav]
-    [halboy.resource :as hal]
-    [halboy.json :as haljson]
+   [halboy.navigator :as halnav]
+   [halboy.resource :as hal]
+   [halboy.json :as haljson]
 
-    [kafka.connect.event-feed.records :as efr]))
+   [kafka.connect.event-feed.records :as efr]))
 
 (defn load-more-events? [resource]
   (not (nil? (hal/get-link resource :next))))

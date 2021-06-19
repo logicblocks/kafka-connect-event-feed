@@ -1,15 +1,15 @@
 (ns kafka.connect.event-feed.task
   (:require
-    [clojure.tools.logging :as log]
+   [clojure.tools.logging :as log]
 
-    [kafka.connect.event-feed.logging]
-    [kafka.connect.event-feed.utils :as efu]
-    [kafka.connect.event-feed.events :as efe])
+   [kafka.connect.event-feed.logging]
+   [kafka.connect.event-feed.utils :as efu]
+   [kafka.connect.event-feed.events :as efe])
   (:gen-class
-    :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceTask
-    :extends org.apache.kafka.connect.source.SourceTask
-    :init init
-    :state state))
+   :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceTask
+   :extends org.apache.kafka.connect.source.SourceTask
+   :init init
+   :state state))
 
 (defn -init []
   [[] (atom nil)])
