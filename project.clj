@@ -40,7 +40,6 @@
                                 [uritemplate-clj "1.3.0"]
 
                                 [http-kit.fake "0.2.2"]]
-               :aot            :all
                :resource-paths ["test-resources"]}]
    :unit
    [:shared {:test-paths ^:replace ["test/shared"
@@ -88,6 +87,9 @@
      ["vcs" "commit" "Pre-release version %s [skip ci]"]
      ["vcs" "tag"]
      ["vcs" "push"]]}}
+
+  :aot [kafka.connect.event-feed.task
+        kafka.connect.event-feed.connector]
 
   :target-path "target/%s/"
   :test-paths ["test/shared"
