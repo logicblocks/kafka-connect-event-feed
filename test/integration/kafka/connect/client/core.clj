@@ -1,4 +1,6 @@
 (ns kafka.connect.client.core
+  (:require
+   [kafka.connect.event-feed.utils :as efu])
   (:import
    [org.sourcelab.kafka.connect.apiclient
     Configuration
@@ -14,8 +16,11 @@
 (defn connectors [^KafkaConnectClient client]
   (.getConnectors client))
 
-(defn connector [^KafkaConnectClient client name]
-  (.getConnector client name))
+(defn connector [^KafkaConnectClient client connector-name]
+  (.getConnector client connector-name))
 
-(defn add-connector [^KafkaConnectClient client name config]
-  (.addConnector client (NewConnectorDefinition. name config)))
+(defn add-connector [^KafkaConnectClient client connector-name config]
+  (.addConnector client
+    (NewConnectorDefinition.
+      (name connector-name)
+      (efu/clojure-data->java-data config))))

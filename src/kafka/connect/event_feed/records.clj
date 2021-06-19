@@ -2,7 +2,8 @@
   (:require
    [kafka.connect.event-feed.utils :as efu])
   (:import
-   [org.apache.kafka.connect.source SourceRecord]))
+   [org.apache.kafka.connect.source SourceRecord]
+   [java.util Collection ArrayList]))
 
 (defn partition-map []
   (efu/clojure-data->java-data
@@ -21,3 +22,6 @@
     (efu/clojure-data->java-data key)
     nil
     (efu/clojure-data->java-data value)))
+
+(defn source-records [records]
+  (ArrayList. ^Collection records))

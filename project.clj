@@ -36,6 +36,9 @@
                                 [nrepl "0.8.3"]
                                 [eftest "0.5.9"]
 
+                                [camel-snake-kebab "0.4.2"]
+                                [uritemplate-clj "1.3.0"]
+
                                 [http-kit.fake "0.2.2"]]
                :aot            :all
                :resource-paths ["test-resources"]}]

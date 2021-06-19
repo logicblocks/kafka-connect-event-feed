@@ -9,8 +9,6 @@
    [kafka.connect.event-feed.logging]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.records :as efr])
-  (:import
-   [java.util ArrayList Collection])
   (:gen-class
    :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceTask
    :extends org.apache.kafka.connect.source.SourceTask
@@ -22,7 +20,7 @@
 
 (defn -start [this props]
   (let [state-atom (.state this)
-        config (efu/property-map->clojure-map props)]
+        config (efu/java-data->clojure-data props)]
     (log/infof "Starting EventFeedSourceTask [config: %s]"
       (pr-str config))
     (reset! state-atom config)))
@@ -46,12 +44,10 @@
 
         records (map
                   #(efr/source-record
-                     :offset nil
                      :topic-name topic-name
-                     :key nil
                      :value (haljson/resource->map %))
                   events)]
-    (ArrayList. ^Collection records)))
+    (efr/source-records records)))
 
 (defn -version [_]
   "0.0.1")

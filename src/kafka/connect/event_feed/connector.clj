@@ -19,7 +19,7 @@
 
 (defn -start [this props]
   (let [state-atom (.state this)
-        config (efu/property-map->clojure-map props)]
+        config (efu/java-data->clojure-data props)]
     (log/infof "Starting EventFeedSourceConnector [name: %s, config: %s]"
       (:name config)
       (pr-str (dissoc config :name)))
@@ -43,4 +43,4 @@
   EventFeedSourceTask)
 
 (defn -taskConfigs [this max-tasks]
-  (repeat max-tasks (efu/clojure-map->property-map @(.state this))))
+  (repeat max-tasks (efu/clojure-data->java-data @(.state this))))

@@ -11,12 +11,6 @@
     Map
     Set]))
 
-(defn property-map->clojure-map [property-map]
-  (w/keywordize-keys (into {} property-map)))
-
-(defn clojure-map->property-map [clojure-map]
-  (HashMap. ^Map (w/stringify-keys clojure-map)))
-
 (defn clojure-data->java-data [x]
   (cond
     (keyword? x) (name x)
