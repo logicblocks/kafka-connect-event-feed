@@ -72,7 +72,7 @@
                      " within " (* interval-ms max-attempts) " ms.")))
           (let [polled-messages (jc/poll consumer
                                   (Duration/ofMillis poll-timeout-ms))
-                all-messages (concat messages polled-messages)]
+                all-messages (into messages polled-messages)]
             (if (>= (count all-messages) n)
               all-messages
               (do

@@ -1,13 +1,13 @@
 (ns kafka.connect.event-feed.test.resources
   (:require
-   [clojure.walk :as w]
+    [clojure.walk :as w]
 
-   [halboy.resource :as hal]
+    [halboy.resource :as hal]
 
-   [camel-snake-kebab.core :as csk]
-   [camel-snake-kebab.extras :as cske]
+    [camel-snake-kebab.core :as csk]
+    [camel-snake-kebab.extras :as cske]
 
-   [uritemplate-clj.core :as uritmpl]))
+    [uritemplate-clj.core :as uritmpl]))
 
 (defn populate [uri-template params]
   (let [params (cske/transform-keys csk/->camelCaseString params)]
@@ -48,18 +48,26 @@
        :templated true})))
 
 (defn events-resource
-  ([base-url]
-   (events-resource base-url {} []))
-  ([base-url parameters]
-   (events-resource base-url parameters []))
-  ([base-url parameters event-resources]
-   (-> (hal/new-resource (events-href base-url parameters))
+  ([base-url & {:keys [events-link-parameters
+                       next-link-parameters
+                       event-resources]}]
+   (-> (hal/new-resource (events-href base-url events-link-parameters))
      (hal/add-href :discovery (discovery-href base-url))
      (hal/add-link :events
        (map (fn [event-resource]
               {:href (hal/get-href event-resource :self)})
          event-resources))
+     (hal/add-link :next
+       (when (not (nil? next-link-parameters))
+         (events-href base-url next-link-parameters)))
      (hal/add-resource :events event-resources))))
 
-(defn event-resource [base-url {:keys [event-id]}]
-  (hal/new-resource (event-href base-url event-id)))
+(defn event-resource [base-url {:keys [id type payload]
+                                :or   {type    :event-type
+                                       payload {}}}]
+  (-> (hal/new-resource (event-href base-url id))
+    (hal/add-link :discovery (discovery-href base-url))
+    (hal/add-properties
+      {:id      id
+       :type    (name type)
+       :payload payload})))
