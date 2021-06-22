@@ -13,10 +13,11 @@
   (efu/clojure-data->java-data
     {:offset offset}))
 
-(defn source-record [& {:keys [offset topic-name key value]}]
+(defn source-record
+  [& {:keys [source-partition source-offset topic-name key value]}]
   (SourceRecord.
-    (partition-map)
-    (offset-map offset)
+    (efu/clojure-data->java-data source-partition)
+    (efu/clojure-data->java-data source-offset)
     topic-name
     nil
     (efu/clojure-data->java-data key)

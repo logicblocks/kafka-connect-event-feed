@@ -51,8 +51,10 @@
                             [ch.qos.logback/logback-classic "1.2.3"]
 
                             [io.logicblocks/kafka.testing "0.0.2"]
+
                             [fundingcircle/jackdaw "0.8.0"]
                             [org.sourcelab/kafka-connect-client "3.1.1"]
+
                             [kelveden/clj-wiremock "1.7.0"]]
              :test-paths   ^:replace ["test/shared"
                                       "test/integration"]
