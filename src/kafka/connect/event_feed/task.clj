@@ -72,7 +72,8 @@
         (log/debugf "EventFeedSourceTask[name: %s] found events: %s"
           (:name config)
           (pr-str events))
-        (log/debugf "EventFeedSourceTask[name: %s] committing offset to memory: %s"
+        (log/debugf
+          "EventFeedSourceTask[name: %s] committing offset to memory: %s"
           (:name config)
           new-offset)
         (commit-offset this new-offset)
@@ -85,7 +86,8 @@
         (Throwable->map t)))))
 
 (defn -commit [this]
-  (log/debugf "EventFeedSourceTask[name: %s] committing records up to offset: %s"
+  (log/debugf
+    "EventFeedSourceTask[name: %s] committing records up to offset: %s"
     (:name (config this))
     (offset this)))
 
