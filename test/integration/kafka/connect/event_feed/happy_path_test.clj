@@ -278,6 +278,57 @@
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
 
+(deftest partitions-by-stream-id
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events
+
+        stream-id-a (td/random-uuid)
+        stream-id-b (td/random-uuid)
+
+        event-resource-1 (tr/event-resource wiremock-url
+                           {:id        (td/random-event-id)
+                            :stream-id stream-id-a
+                            :type      :event-type-1})
+        event-resource-2 (tr/event-resource wiremock-url
+                           {:id        (td/random-event-id)
+                            :stream-id stream-id-a
+                            :type      :event-type-2})
+        event-resource-3 (tr/event-resource wiremock-url
+                           {:id        (td/random-event-id)
+                            :stream-id stream-id-b
+                            :type      :event-type-3})
+        event-resource-4 (tr/event-resource wiremock-url
+                           {:id        (td/random-event-id)
+                            :stream-id stream-id-b
+                            :type      :event-type-3})]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server)
+       (ts/events-resource wiremock-server
+         :events-link-parameters {:pick 5}
+         :event-resources [event-resource-1
+                           event-resource-2
+                           event-resource-3
+                           event-resource-4])]
+      (with-connector kafka-connect
+        {:name   :event-feed-source
+         :config {:connector.class                           connector-class
+                  :batch.size                                0
+                  :topic.name                                topic-name
+                  :eventfeed.discovery.url                   (tr/discovery-href
+                                                               wiremock-url)
+                  :eventfeed.pick                            5
+                  :topic.creation.default.partitions         2
+                  :topic.creation.default.replication.factor 1}}
+        (let [messages (tc/consume-n kafka topic-name 4)
+              partition-a-messages (take 2 messages)
+              partition-b-messages (drop 2 messages)]
+          (is (every? #(= (:partition %) 0) partition-a-messages))
+          (is (every? #(= (:partition %) 1) partition-b-messages)))))))
+
 (comment
   (compile 'kafka.connect.event-feed.task)
   (compile 'kafka.connect.event-feed.connector))

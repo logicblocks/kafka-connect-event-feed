@@ -14,13 +14,13 @@
     {:offset offset}))
 
 (defn source-record
-  [& {:keys [source-partition source-offset topic-name key value]}]
+  [& {:keys [source-partition source-offset topic-name k value]}]
   (SourceRecord.
     (efu/clojure-data->java-data source-partition)
     (efu/clojure-data->java-data source-offset)
     topic-name
     nil
-    (efu/clojure-data->java-data key)
+    (efu/clojure-data->java-data k)
     nil
     (efu/clojure-data->java-data value)))
 

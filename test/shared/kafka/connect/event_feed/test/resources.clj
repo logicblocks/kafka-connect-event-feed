@@ -7,7 +7,8 @@
    [camel-snake-kebab.core :as csk]
    [camel-snake-kebab.extras :as cske]
 
-   [uritemplate-clj.core :as uritmpl]))
+   [uritemplate-clj.core :as uritmpl]
+   [kafka.connect.event-feed.test.data :as td]))
 
 (defn populate [uri-template params]
   (let [params (cske/transform-keys csk/->camelCaseString params)]
@@ -62,12 +63,14 @@
          (events-href base-url next-link-parameters)))
      (hal/add-resource :events event-resources))))
 
-(defn event-resource [base-url {:keys [id type payload]
-                                :or   {type    :event-type
-                                       payload {}}}]
+(defn event-resource [base-url {:keys [id stream-id type payload]
+                                :or   {stream-id (td/random-uuid)
+                                       type      :event-type
+                                       payload   {}}}]
   (-> (hal/new-resource (event-href base-url id))
     (hal/add-link :discovery (discovery-href base-url))
     (hal/add-properties
-      {:id      id
-       :type    (name type)
-       :payload payload})))
+      {:id        id
+       :streamId stream-id
+       :type      (name type)
+       :payload   payload})))
