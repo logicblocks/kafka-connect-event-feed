@@ -9,18 +9,13 @@
    [clj-wiremock.utils :as wmu]
 
    [kafka.testing.combined :as ktc]
-   [kafka.testing.connect :as ktkc]
-
-   [kafka.connect.client.core :as kcc]
 
    [kafka.connect.event-feed.test.logging]
    [kafka.connect.event-feed.test.resources :as tr]
    [kafka.connect.event-feed.test.consumer :as tc]
    [kafka.connect.event-feed.test.stubs :as ts]
-   [kafka.connect.event-feed.test.data :as td]))
-
-(def connector-class
-  "io.logicblocks.kafka.connect.eventfeed.EventFeedSourceConnector")
+   [kafka.connect.event-feed.test.data :as td]
+   [kafka.connect.event-feed.test.connector :as tcn]))
 
 (def kafka-atom (atom nil))
 (def wiremock-atom (atom nil))
@@ -28,12 +23,6 @@
 (use-fixtures :each
   (ktc/with-kafka kafka-atom)
   (wmf/with-wiremock wiremock-atom))
-
-(defmacro with-connector [kafka-connect options & body]
-  `(let [admin-url# (ktkc/admin-url ~kafka-connect)
-         client# (kcc/client {:url admin-url#})]
-     (kcc/add-connector client# (:name ~options) (:config ~options))
-     ~@body))
 
 (deftest fetches-no-events-when-event-feed-empty
   (let [kafka (ktc/kafka @kafka-atom)
@@ -47,9 +36,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 5}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          5}}
@@ -83,9 +72,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 2 :since event-resource-id}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          2}}
@@ -118,9 +107,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 2 :since event-resource-2-id}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          2}}
@@ -162,9 +151,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 2 :since event-resource-3-id}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          2}}
@@ -218,9 +207,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 2 :since event-resource-5-id}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          2}}
@@ -264,9 +253,9 @@
        (ts/events-resource wiremock-server
          :events-link-parameters {:pick 2 :since event-resource-3-id}
          :event-resources [])]
-      (with-connector kafka-connect
+      (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         connector-class
+         :config {:connector.class         tcn/connector-class
                   :batch.size              0
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
@@ -277,57 +266,6 @@
                   (haljson/resource->map event-resource-2)
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
-
-(deftest partitions-by-stream-id
-  (let [kafka (ktc/kafka @kafka-atom)
-        kafka-connect (ktc/kafka-connect @kafka-atom)
-        wiremock-server @wiremock-atom
-        wiremock-url (wmu/base-url wiremock-server)
-
-        topic-name :events
-
-        stream-id-a (td/random-uuid)
-        stream-id-b (td/random-uuid)
-
-        event-resource-1 (tr/event-resource wiremock-url
-                           {:id        (td/random-event-id)
-                            :stream-id stream-id-a
-                            :type      :event-type-1})
-        event-resource-2 (tr/event-resource wiremock-url
-                           {:id        (td/random-event-id)
-                            :stream-id stream-id-a
-                            :type      :event-type-2})
-        event-resource-3 (tr/event-resource wiremock-url
-                           {:id        (td/random-event-id)
-                            :stream-id stream-id-b
-                            :type      :event-type-3})
-        event-resource-4 (tr/event-resource wiremock-url
-                           {:id        (td/random-event-id)
-                            :stream-id stream-id-b
-                            :type      :event-type-3})]
-    (wmc/with-stubs
-      [(ts/discovery-resource wiremock-server)
-       (ts/events-resource wiremock-server
-         :events-link-parameters {:pick 5}
-         :event-resources [event-resource-1
-                           event-resource-2
-                           event-resource-3
-                           event-resource-4])]
-      (with-connector kafka-connect
-        {:name   :event-feed-source
-         :config {:connector.class                           connector-class
-                  :batch.size                                0
-                  :topic.name                                topic-name
-                  :eventfeed.discovery.url                   (tr/discovery-href
-                                                               wiremock-url)
-                  :eventfeed.pick                            5
-                  :topic.creation.default.partitions         2
-                  :topic.creation.default.replication.factor 1}}
-        (let [messages (tc/consume-n kafka topic-name 4)
-              partition-a-messages (take 2 messages)
-              partition-b-messages (drop 2 messages)]
-          (is (every? #(= (:partition %) 0) partition-a-messages))
-          (is (every? #(= (:partition %) 1) partition-b-messages)))))))
 
 (comment
   (compile 'kafka.connect.event-feed.task)
