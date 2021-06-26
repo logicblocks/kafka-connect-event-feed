@@ -70,8 +70,20 @@
       :documentation (str "The URL of the discovery resource of the API that "
                        "exposes an event feed."))
     (define
-      :name "eventfeed.pick"
+      :name "eventfeed.events.per.page"
       :type :type/int
       :importance :importance/medium
       :documentation (str "The number of events to request in each request to "
                        "the event feed."))))
+
+(defn connector-name [config]
+  (:name config))
+
+(defn topic-name [config]
+  (:topic.name config))
+
+(defn event-feed-discovery-url [config]
+  (:eventfeed.discovery.url config))
+
+(defn event-feed-events-per-page [config]
+  (:eventfeed.events.per.page config))

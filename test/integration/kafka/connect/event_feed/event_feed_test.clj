@@ -38,10 +38,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          5}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 5}}
         (let [messages
               (tc/consume-if kafka topic-name
                 (fn []
@@ -74,10 +74,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          2}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 2}}
         (let [messages (tc/consume-n kafka topic-name 1)
               message (first messages)
               message-payload (get-in message [:value :payload])]
@@ -109,10 +109,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          2}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 2}}
         (let [messages (tc/consume-n kafka topic-name 2)
               message-payloads (map #(get-in % [:value :payload])
                                  messages)]
@@ -153,10 +153,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          2}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 2}}
         (let [messages (tc/consume-n kafka topic-name 3)
               message-payloads (map #(get-in % [:value :payload])
                                  messages)]
@@ -209,10 +209,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          2}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 2}}
         (let [messages (tc/consume-n kafka topic-name 5)
               message-payloads (map #(get-in % [:value :payload])
                                  messages)]
@@ -255,10 +255,10 @@
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href wiremock-url)
-                  :eventfeed.pick          2}}
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 2}}
         (let [messages (tc/consume-n kafka topic-name 3)
               message-payloads (map #(get-in % [:value :payload]) messages)]
           (is (= [(haljson/resource->map event-resource-1)

@@ -69,7 +69,7 @@
          {:connector.class                           tcn/connector-class
           :topic.name                                topic-name
           :eventfeed.discovery.url                   discovery-href
-          :eventfeed.pick                            5
+          :eventfeed.events.per.page                 5
           :topic.creation.default.partitions         2
           :topic.creation.default.replication.factor 1}}
         (let [messages (tc/consume-n kafka topic-name 4

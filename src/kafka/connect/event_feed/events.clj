@@ -4,6 +4,7 @@
    [halboy.resource :as hal]
    [halboy.json :as haljson]
 
+   [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
 
 (defn load-more-events? [resource]
@@ -19,13 +20,13 @@
      [navigator resource events])))
 
 (defn load-new-events [config offset]
-  (let [discovery-url (:eventfeed.discovery.url config)
-        pick (:eventfeed.pick config)]
+  (let [discovery-url (efc/event-feed-discovery-url config)
+        events-per-page (efc/event-feed-events-per-page config)]
     (loop [all-events []
            navigator (halnav/discover discovery-url)
            link :events
            parameters
-           (cond-> {:pick pick}
+           (cond-> {:pick events-per-page}
              (not (nil? offset)) (assoc :since offset))]
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)
@@ -35,11 +36,12 @@
           all-events)))))
 
 (defn event->source-record [config event source-partition]
-  (let [topic-name (:topic.name config)
+  (let [topic-name (efc/topic-name config)
         stream-id (hal/get-property event :streamId)
+        event-id (hal/get-property event :id)
         record (efr/source-record
                  :source-partition source-partition
-                 :source-offset {:offset (hal/get-property event :id)}
+                 :source-offset {:offset event-id}
                  :topic-name topic-name
                  :key stream-id
                  :value (haljson/resource->map event))]

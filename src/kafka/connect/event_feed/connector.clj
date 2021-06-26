@@ -20,17 +20,15 @@
 (defn -start [this props]
   (let [state-atom (.state this)
         config (efu/java-data->clojure-data props)]
-    (log/infof "Starting EventFeedSourceConnector [name: %s, config: %s]"
-      (:name config)
-      (pr-str (dissoc config :name)))
+    (log/infof "EventFeedSourceConnector[config: %s] starting..."
+      (pr-str config))
     (reset! state-atom config)))
 
 (defn -stop [this]
   (let [state-atom (.state this)
         config (deref state-atom)]
-    (log/infof "Stopping EventFeedSourceConnector [name: %s, config: %s]"
-      (:name config)
-      (pr-str (dissoc config :name)))
+    (log/infof "EventFeedSourceConnector[config: %s] stopping..."
+      (pr-str config))
     (reset! state-atom nil)))
 
 (defn -config [_]

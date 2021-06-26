@@ -7,7 +7,11 @@
    [java.util Collection ArrayList]))
 
 (defn source-record
-  [& {:keys [source-partition source-offset topic-name key value]}]
+  [& {:keys [source-partition
+             source-offset
+             topic-name
+             key
+             value]}]
   (SourceRecord.
     (efu/clojure-data->java-data source-partition)
     (efu/clojure-data->java-data source-offset)
