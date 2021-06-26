@@ -38,10 +38,10 @@
   (let [topic-name (:topic.name config)
         stream-id (hal/get-property event :streamId)
         record (efr/source-record
-                 :k stream-id
                  :source-partition source-partition
                  :source-offset {:offset (hal/get-property event :id)}
                  :topic-name topic-name
+                 :key stream-id
                  :value (haljson/resource->map event))]
     record))
 

@@ -19,8 +19,7 @@
 (def wiremock-atom (atom nil))
 
 (use-fixtures :each
-  (ktc/with-kafka kafka-atom
-    :kafka {:num.partitions 2})
+  (ktc/with-kafka kafka-atom)
   (wmf/with-wiremock wiremock-atom))
 
 (deftest partitions-by-stream-id
@@ -28,6 +27,8 @@
         kafka-connect (ktc/kafka-connect @kafka-atom)
         wiremock-server @wiremock-atom
         wiremock-url (wmu/base-url wiremock-server)
+
+        discovery-href (tr/discovery-href wiremock-url)
 
         topic-name :events
 
@@ -46,8 +47,9 @@
                            {:id        (td/random-event-id)
                             :stream-id stream-id-b
                             :type      :event-type-3})
+        event-resource-4-id (td/random-event-id)
         event-resource-4 (tr/event-resource wiremock-url
-                           {:id        (td/random-event-id)
+                           {:id        event-resource-4-id
                             :stream-id stream-id-b
                             :type      :event-type-3})]
     (wmc/with-stubs
@@ -57,15 +59,19 @@
          :event-resources [event-resource-1
                            event-resource-2
                            event-resource-3
-                           event-resource-4])]
+                           event-resource-4])
+       (ts/events-resource wiremock-server
+         :events-link-parameters {:pick 5 :since event-resource-4-id}
+         :event-resources [])]
       (tcn/with-connector kafka-connect
-        {:name   :event-feed-source
-         :config {:connector.class         tcn/connector-class
-                  :batch.size              0
-                  :topic.name              topic-name
-                  :eventfeed.discovery.url (tr/discovery-href
-                                             wiremock-url)
-                  :eventfeed.pick          5}}
+        {:name :event-feed-source
+         :config
+         {:connector.class                           tcn/connector-class
+          :topic.name                                topic-name
+          :eventfeed.discovery.url                   discovery-href
+          :eventfeed.pick                            5
+          :topic.creation.default.partitions         2
+          :topic.creation.default.replication.factor 1}}
         (let [messages (tc/consume-n kafka topic-name 4
                          :max-attempts 20)
               partition-a-messages (take 2 messages)

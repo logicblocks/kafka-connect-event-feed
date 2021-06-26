@@ -15,9 +15,10 @@
            value-serde (json-serdes/serde)}}]
   (jc/subscribed-consumer
     (efu/clojure-data->java-data
-      {:auto.offset.reset :earliest
-       :bootstrap.servers (ktb/bootstrap-servers kafka)
-       :group.id          (data/random-uuid)})
+      {:auto.offset.reset        :earliest
+       :allow.auto.create.topics false
+       :bootstrap.servers        (ktb/bootstrap-servers kafka)
+       :group.id                 (data/random-uuid)})
     [{:topic-name  (name topic-name)
       :key-serde   (or key-serde (json-serdes/serde))
       :value-serde (or value-serde (json-serdes/serde))}]))

@@ -1,4 +1,4 @@
-(ns kafka.connect.event-feed.happy-path-test
+(ns kafka.connect.event-feed.event-feed-test
   (:require
    [clojure.test :refer :all]
 
@@ -256,7 +256,6 @@
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
          :config {:connector.class         tcn/connector-class
-                  :batch.size              0
                   :topic.name              topic-name
                   :eventfeed.discovery.url (tr/discovery-href wiremock-url)
                   :eventfeed.pick          2}}
