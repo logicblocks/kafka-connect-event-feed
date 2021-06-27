@@ -75,7 +75,7 @@
       offset)
     (let [events (efe/load-new-events config offset)
           records (efe/events->source-records config events default-partition)
-          new-offset (hal/get-property (last events) :id)]
+          new-offset (efe/event->offset config (last events))]
       (if (empty? events)
         (do
           (log/debugf "EventFeedSourceTask[name: %s] found no new events."

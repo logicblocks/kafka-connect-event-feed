@@ -266,6 +266,52 @@
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
 
+(deftest uses-provided-jsonpath-to-determine-event-offset-when-specified
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events
+
+        event-resource-1-offset (td/random-uuid)
+        event-resource-1 (tr/event-resource wiremock-url
+                           {:type    :event-type-1
+                            :payload {:offset event-resource-1-offset}})
+        event-resource-2-offset (td/random-uuid)
+        event-resource-2 (tr/event-resource wiremock-url
+                           {:type    :event-type-2
+                            :payload {:offset event-resource-2-offset}})
+        event-resource-3-offset (td/random-uuid)
+        event-resource-3 (tr/event-resource wiremock-url
+                           {:type    :event-type-3
+                            :payload {:offset event-resource-3-offset}})]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server)
+       (ts/events-resource wiremock-server
+         :events-link-parameters {:pick 2}
+         :event-resources [event-resource-1])
+       (ts/events-resource wiremock-server
+         :events-link-parameters {:pick 2 :since event-resource-1-offset}
+         :event-resources [event-resource-2 event-resource-3])
+       (ts/events-resource wiremock-server
+         :events-link-parameters {:pick 2 :since event-resource-3-offset}
+         :event-resources [])]
+      (tcn/with-connector kafka-connect
+        {:name :event-feed-source
+         :config
+         {:connector.class               tcn/connector-class
+          :topic.name                    topic-name
+          :eventfeed.discovery.url       (tr/discovery-href wiremock-url)
+          :eventfeed.events.per.page     2
+          :events.fields.offset.jsonpath "$.payload.offset"}}
+        (let [messages (tc/consume-n kafka topic-name 3)
+              message-payloads (map #(get-in % [:value :payload]) messages)]
+          (is (= [(haljson/resource->map event-resource-1)
+                  (haljson/resource->map event-resource-2)
+                  (haljson/resource->map event-resource-3)]
+                message-payloads)))))))
+
 (comment
   (compile 'kafka.connect.event-feed.task)
   (compile 'kafka.connect.event-feed.connector))

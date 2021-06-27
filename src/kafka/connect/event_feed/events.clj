@@ -38,18 +38,23 @@
           (recur all-events navigator :next {})
           all-events)))))
 
+(defn event->key [config event]
+  (jp/at-path
+    (efc/event-key-field-jsonpath config)
+    (haljson/resource->map event)))
+
+(defn event->offset [config event]
+  (jp/at-path
+    (efc/event-offset-field-jsonpath config)
+    (haljson/resource->map event)))
+
 (defn event->source-record [config event source-partition]
-  (let [key-field-jsonpath (efc/event-key-field-jsonpath config)
-        topic-name (efc/topic-name config)
-        key (jp/at-path key-field-jsonpath (haljson/resource->map event))
-        event-id (hal/get-property event :id)
-        record (efr/source-record
-                 :source-partition source-partition
-                 :source-offset {:offset event-id}
-                 :topic-name topic-name
-                 :key key
-                 :value (haljson/resource->map event))]
-    record))
+  (efr/source-record
+    :source-partition source-partition
+    :source-offset {:offset (event->offset config event)}
+    :topic-name (efc/topic-name config)
+    :key (event->key config event)
+    :value (haljson/resource->map event)))
 
 (defn events->source-records [config events source-partition]
   (efr/source-records

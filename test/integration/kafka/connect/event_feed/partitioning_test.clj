@@ -75,7 +75,7 @@
           (is (every? #(= (:partition %) 0) partition-a-messages))
           (is (every? #(= (:partition %) 1) partition-b-messages)))))))
 
-(deftest partitions-based-on-provided-json-path-when-specified
+(deftest partitions-based-on-provided-jsonpath-when-specified
   (let [kafka (ktc/kafka @kafka-atom)
         kafka-connect (ktc/kafka-connect @kafka-atom)
         wiremock-server @wiremock-atom

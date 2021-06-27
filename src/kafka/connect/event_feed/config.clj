@@ -80,6 +80,12 @@
       :documentation (str "The number of events to request in each request to "
                        "the event feed."))
     (define
+      :name "events.fields.offset.jsonpath"
+      :type :type/string
+      :default-value "$.id"
+      :importance :importance/medium
+      :documentation "A JSONPath to the field to use as the event offset.")
+    (define
       :name "events.fields.key.jsonpath"
       :type :type/string
       :default-value "$.streamId"
@@ -88,11 +94,11 @@
                        "useful for partitioning retrieved events."))))
 
 (defn configuration [^Map properties]
-  (let [config-obj (AbstractConfig. (configuration-definition) properties)
-        config-map (.values config-obj)
-        config (efu/java-data->clojure-data config-map)
-        config (assoc config :connector.name (get properties "name"))]
-    config))
+  (-> (configuration-definition)
+    (AbstractConfig. properties)
+    (.values)
+    (efu/java-data->clojure-data)
+    (assoc :connector.name (get properties "name"))))
 
 (defn connector-name [config]
   (:connector.name config))
@@ -105,6 +111,9 @@
 
 (defn event-feed-events-per-page [config]
   (:eventfeed.events.per.page config))
+
+(defn event-offset-field-jsonpath [config]
+  (:events.fields.offset.jsonpath config))
 
 (defn event-key-field-jsonpath [config]
   (:events.fields.key.jsonpath config))
