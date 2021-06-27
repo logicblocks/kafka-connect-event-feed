@@ -3,8 +3,8 @@
   (:require
    [kafka.connect.event-feed.utils :as efu])
   (:import
-   [org.apache.kafka.connect.source SourceRecord]
-   [java.util Collection ArrayList]))
+   [java.util ArrayList Collection]
+   [org.apache.kafka.connect.source SourceRecord]))
 
 (defn source-record
   [& {:keys [source-partition

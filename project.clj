@@ -20,7 +20,8 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.logging "1.1.0"]
 
-                 [halboy "5.1.1"]]
+                 [halboy "5.1.1"]
+                 [json-path "2.1.0"]]
 
   :profiles
   {:provided

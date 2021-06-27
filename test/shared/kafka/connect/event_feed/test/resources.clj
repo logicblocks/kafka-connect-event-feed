@@ -63,14 +63,16 @@
          (events-href base-url next-link-parameters)))
      (hal/add-resource :events event-resources))))
 
-(defn event-resource [base-url {:keys [id stream-id type payload]
-                                :or   {stream-id (td/random-uuid)
-                                       type      :event-type
-                                       payload   {}}}]
+(defn event-resource
+  [base-url {:keys [id streamId type payload]
+             :or   {id        (td/random-event-id)
+                    streamId (td/random-stream-id)
+                    type      :event-type
+                    payload   {}}}]
   (-> (hal/new-resource (event-href base-url id))
     (hal/add-link :discovery (discovery-href base-url))
     (hal/add-properties
-      {:id        id
-       :streamId stream-id
-       :type      (name type)
-       :payload   payload})))
+      {:id       id
+       :streamId streamId
+       :type     (name type)
+       :payload  payload})))

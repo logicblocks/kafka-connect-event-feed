@@ -21,7 +21,7 @@
       (efu/clojure-data->java-data default-partition))))
 
 (defn context-config [context]
-  (efu/java-data->clojure-data (.configs context)))
+  (efc/configuration (.configs context)))
 
 (defn state-atom [this]
   (.state this))
@@ -50,7 +50,7 @@
     (update-state this assoc :offset offset)))
 
 (defn -start [this props]
-  (let [config (efu/java-data->clojure-data props)]
+  (let [config (efc/configuration props)]
     (log/infof "EventFeedSourceTask[config: %s] starting..."
       (pr-str config))
     (update-state this assoc :config config)))

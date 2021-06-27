@@ -1,8 +1,11 @@
 (ns kafka.connect.event-feed.events
+  (:refer-clojure :exclude [key])
   (:require
    [halboy.navigator :as halnav]
    [halboy.resource :as hal]
    [halboy.json :as haljson]
+
+   [json-path :as jp]
 
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
@@ -36,14 +39,15 @@
           all-events)))))
 
 (defn event->source-record [config event source-partition]
-  (let [topic-name (efc/topic-name config)
-        stream-id (hal/get-property event :streamId)
+  (let [key-field-jsonpath (efc/event-key-field-jsonpath config)
+        topic-name (efc/topic-name config)
+        key (jp/at-path key-field-jsonpath (haljson/resource->map event))
         event-id (hal/get-property event :id)
         record (efr/source-record
                  :source-partition source-partition
                  :source-offset {:offset event-id}
                  :topic-name topic-name
-                 :key stream-id
+                 :key key
                  :value (haljson/resource->map event))]
     record))
 

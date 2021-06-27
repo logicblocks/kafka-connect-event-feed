@@ -1,8 +1,7 @@
 (ns kafka.connect.event-feed.utils
-  (:require
-   [clojure.walk :as w])
   (:import
-   [java.util ArrayList
+   [java.util
+    ArrayList
     Collection
     HashMap
     HashSet

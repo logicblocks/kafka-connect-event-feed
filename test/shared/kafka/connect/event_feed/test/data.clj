@@ -8,3 +8,6 @@
 
 (defn random-event-id []
   (random-uuid))
+
+(defn random-stream-id []
+  (random-uuid))

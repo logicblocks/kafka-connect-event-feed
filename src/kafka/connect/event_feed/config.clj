@@ -1,12 +1,16 @@
 (ns kafka.connect.event-feed.config
+  (:require
+   [kafka.connect.event-feed.utils :as efu])
   (:import
    [org.apache.kafka.common.config
+    AbstractConfig
     ConfigDef
     ConfigDef$Type
     ConfigDef$Importance
-    ConfigDef$Width]))
+    ConfigDef$Width]
+   [java.util Map]))
 
-(def config-type-mapping
+(def configuration-type-mapping
   {:type/boolean  ConfigDef$Type/BOOLEAN
    :type/string   ConfigDef$Type/STRING
    :type/int      ConfigDef$Type/INT
@@ -17,25 +21,25 @@
    :type/class    ConfigDef$Type/CLASS
    :type/password ConfigDef$Type/PASSWORD})
 
-(def config-importance-mapping
+(def configuration-importance-mapping
   {:importance/high   ConfigDef$Importance/HIGH
    :importance/medium ConfigDef$Importance/MEDIUM
    :importance/low    ConfigDef$Importance/LOW})
 
-(def config-width-mapping
+(def configuration-width-mapping
   {:width/none   ConfigDef$Width/NONE
    :width/short  ConfigDef$Width/SHORT
    :width/medium ConfigDef$Width/MEDIUM
    :width/long   ConfigDef$Width/LONG})
 
-(defn config-type [k]
-  (get config-type-mapping k))
+(defn configuration-type [k]
+  (get configuration-type-mapping k))
 
-(defn config-importance [k]
-  (get config-importance-mapping k))
+(defn configuration-importance [k]
+  (get configuration-importance-mapping k))
 
-(defn config-width [k]
-  (get config-width-mapping k))
+(defn configuration-width [k]
+  (get configuration-width-mapping k))
 
 (defn- config-def []
   (ConfigDef.))
@@ -46,16 +50,16 @@
       :or   {default-value nil}}]
   (if default-value
     (.define config-def name
-      (config-type type)
-      (config-importance importance)
+      (configuration-type type)
+      default-value
+      (configuration-importance importance)
       documentation)
     (.define config-def name
-      (config-type type)
-      default-value
-      (config-importance importance)
+      (configuration-type type)
+      (configuration-importance importance)
       documentation)))
 
-(defn config-definition []
+(defn configuration-definition []
   (-> (config-def)
     (define
       :name "topic.name"
@@ -74,10 +78,24 @@
       :type :type/int
       :importance :importance/medium
       :documentation (str "The number of events to request in each request to "
-                       "the event feed."))))
+                       "the event feed."))
+    (define
+      :name "events.fields.key.jsonpath"
+      :type :type/string
+      :default-value "$.streamId"
+      :importance :importance/medium
+      :documentation (str "A JSONPath to the field to use as the event key, "
+                       "useful for partitioning retrieved events."))))
+
+(defn configuration [^Map properties]
+  (let [config-obj (AbstractConfig. (configuration-definition) properties)
+        config-map (.values config-obj)
+        config (efu/java-data->clojure-data config-map)
+        config (assoc config :connector.name (get properties "name"))]
+    config))
 
 (defn connector-name [config]
-  (:name config))
+  (:connector.name config))
 
 (defn topic-name [config]
   (:topic.name config))
@@ -87,3 +105,6 @@
 
 (defn event-feed-events-per-page [config]
   (:eventfeed.events.per.page config))
+
+(defn event-key-field-jsonpath [config]
+  (:events.fields.key.jsonpath config))

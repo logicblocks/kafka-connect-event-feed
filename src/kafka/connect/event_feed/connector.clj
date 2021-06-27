@@ -7,7 +7,8 @@
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.config :as efc])
   (:import
-   [io.logicblocks.kafka.connect.eventfeed EventFeedSourceTask])
+   [io.logicblocks.kafka.connect.eventfeed
+    EventFeedSourceTask])
   (:gen-class
    :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceConnector
    :extends org.apache.kafka.connect.source.SourceConnector
@@ -19,20 +20,23 @@
 
 (defn -start [this props]
   (let [state-atom (.state this)
-        config (efu/java-data->clojure-data props)]
+        config (efc/configuration props)]
     (log/infof "EventFeedSourceConnector[config: %s] starting..."
       (pr-str config))
-    (reset! state-atom config)))
+    (reset! state-atom
+      {:config config
+       :properties props})))
 
 (defn -stop [this]
   (let [state-atom (.state this)
-        config (deref state-atom)]
+        state (deref state-atom)
+        config (:config state)]
     (log/infof "EventFeedSourceConnector[config: %s] stopping..."
       (pr-str config))
     (reset! state-atom nil)))
 
 (defn -config [_]
-  (efc/config-definition))
+  (efc/configuration-definition))
 
 (defn -version [_]
   "0.0.1")
@@ -41,4 +45,7 @@
   EventFeedSourceTask)
 
 (defn -taskConfigs [this max-tasks]
-  (repeat max-tasks (efu/clojure-data->java-data @(.state this))))
+  (let [state-atom (.state this)
+        state (deref state-atom)
+        props (:properties state)]
+    (repeat max-tasks props)))
