@@ -1,5 +1,4 @@
 (ns kafka.connect.event-feed.events
-  (:refer-clojure :exclude [key])
   (:require
    [halboy.navigator :as halnav]
    [halboy.resource :as hal]
