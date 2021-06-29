@@ -5,13 +5,7 @@
    [kafka.connect.event-feed.logging]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.config :as efc]
-   [kafka.connect.event-feed.events :as efe]
-   [halboy.resource :as hal])
-  (:gen-class
-   :name io.logicblocks.kafka.connect.eventfeed.EventFeedSourceTask
-   :extends org.apache.kafka.connect.source.SourceTask
-   :init init
-   :state state))
+   [kafka.connect.event-feed.events :as efe]))
 
 (def default-partition {:partition "default"})
 
@@ -23,49 +17,43 @@
 (defn context-config [context]
   (efc/configuration (.configs context)))
 
-(defn state-atom [this]
-  (.state this))
+(defn state [state-atom]
+  @state-atom)
 
-(defn state [this]
-  @(state-atom this))
+(defn update-state [state-atom f & args]
+  (apply swap! state-atom f args))
 
-(defn update-state [this f & args]
-  (apply swap! (state-atom this) f args))
+(defn config [state-atom]
+  (:config (state state-atom)))
 
-(defn config [this]
-  (:config (state this)))
+(defn offset [state-atom]
+  (:offset (state state-atom)))
 
-(defn offset [this]
-  (:offset (state this)))
-
-(defn -init []
-  [[] (atom nil)])
-
-(defn -initialize [this context]
+(defn initialize [state-atom context]
   (let [offset-map (context-offset-map context)
         offset (:offset offset-map)]
     (log/infof "EventFeedSourceTask[config: %s] initializing with offset: %s..."
       (pr-str (context-config context))
       (or offset "nil"))
-    (update-state this assoc :offset offset)))
+    (update-state state-atom assoc :offset offset)))
 
-(defn -start [this props]
+(defn start [state-atom props]
   (let [config (efc/configuration props)]
     (log/infof "EventFeedSourceTask[config: %s] starting..."
       (pr-str config))
-    (update-state this assoc :config config)))
+    (update-state state-atom assoc :config config)))
 
-(defn -stop [this]
+(defn stop [state-atom]
   (log/infof "EventFeedSourceTask[config: %s] stopping..."
-    (pr-str (config this)))
-  (update-state this assoc :config nil))
+    (pr-str (config state-atom)))
+  (update-state state-atom assoc :config nil))
 
 (defn wait-interval [_]
   (Thread/sleep 200))
 
-(defn fetch-events [this]
-  (let [config (config this)
-        offset (offset this)]
+(defn fetch-events [state-atom]
+  (let [config (config state-atom)
+        offset (offset state-atom)]
     (log/infof
       (str "EventFeedSourceTask[name: %s] looking for new events: "
         "[url: %s, per-page: %s, offset: %s]")
@@ -87,39 +75,39 @@
             (pr-str events))
           [records new-offset])))))
 
-(defn commit-offset [this offset]
+(defn commit-offset [state-atom offset]
   (when offset
     (log/debugf
       "EventFeedSourceTask[name: %s] committing offset to memory: %s"
-      (efc/connector-name (config this))
+      (efc/connector-name (config state-atom))
       offset)
-    (update-state this assoc :offset offset)))
+    (update-state state-atom assoc :offset offset)))
 
-(defn -poll [this]
+(defn poll [state-atom]
   (try
     (do
-      (wait-interval this)
-      (let [[records offset] (fetch-events this)]
-        (commit-offset this offset)
+      (wait-interval state-atom)
+      (let [[records offset] (fetch-events state-atom)]
+        (commit-offset state-atom offset)
         records))
     (catch Throwable t
       (log/errorf
         (str "EventFeedSourceTask[name: %s] encountered exception during"
           " poll: %s")
-        (efc/connector-name (config this))
+        (efc/connector-name (config state-atom))
         (Throwable->map t)))))
 
-(defn -commit [this]
+(defn commit [state-atom]
   (log/debugf
     "EventFeedSourceTask[name: %s] committing records up to offset: %s"
-    (efc/connector-name (config this))
-    (offset this)))
+    (efc/connector-name (config state-atom))
+    (offset state-atom)))
 
-(defn -commitRecord [this record metadata]
+(defn commit-record [state-atom record metadata]
   (log/debugf "EventFeedSourceTask[name: %s] committing record: %s, %s"
-    (efc/connector-name (config this))
+    (efc/connector-name (config state-atom))
     (pr-str record)
     (pr-str metadata)))
 
-(defn -version [_]
+(defn version [_]
   "0.0.1")

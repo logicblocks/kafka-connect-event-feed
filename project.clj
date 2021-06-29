@@ -64,6 +64,10 @@
    [:unit :integration {:test-paths ^:replace ["test/shared"
                                                "test/unit"
                                                "test/integration"]}]
+
+   :uberjar
+   {:aot :all}
+
    :prerelease
    {:release-tasks
     [["shell" "git" "diff" "--exit-code"]
@@ -94,10 +98,18 @@
   :aot [kafka.connect.event-feed.task
         kafka.connect.event-feed.connector]
 
-  :target-path "target/%s/"
+  :java-source-paths ["src/java"]
+  :source-paths ["src/clojure"]
   :test-paths ["test/shared"
                "test/unit"
                "test/integration"]
+
+  :target-path "target/%s/"
+
+  :javac-options ["-source" "8" "-target" "8"
+                  "-Xlint:all,-options,-path"
+                  "-Werror"
+                  "-proc:none"]
 
   :cloverage
   {:ns-exclude-regex [#"^user"]}
