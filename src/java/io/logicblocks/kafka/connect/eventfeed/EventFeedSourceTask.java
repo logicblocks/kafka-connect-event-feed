@@ -17,8 +17,16 @@ public class EventFeedSourceTask extends SourceTask {
             "kafka.connect.event-feed.task";
 
     static {
-        IFn require = Clojure.var(CLOJURE_CORE_NS, "require");
-        require.invoke(Clojure.read(TASK_NS));
+        ClassLoader previous = Thread.currentThread().getContextClassLoader();
+        ClassLoader parentClassLoader =
+                EventFeedSourceConnector.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader(parentClassLoader);
+        try {
+            IFn require = Clojure.var(CLOJURE_CORE_NS, "require");
+            require.invoke(Clojure.read(TASK_NS));
+        } finally {
+            Thread.currentThread().setContextClassLoader(previous);
+        }
     }
 
     private final Atom state;
