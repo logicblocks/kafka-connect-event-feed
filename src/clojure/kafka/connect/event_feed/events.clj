@@ -9,8 +9,10 @@
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
 
-(defn load-more-events? [resource]
-  (not (nil? (hal/get-link resource :next))))
+(defn load-more-events? [resource pagination]
+  (and
+    pagination
+    (not (nil? (hal/get-link resource :next)))))
 
 (defn load-page-of-events
   ([navigator link]
@@ -33,7 +35,9 @@
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)
             all-events (into all-events events)]
-        (if (load-more-events? resource)
+        (if (load-more-events?
+              resource
+              (efc/event-feed-pagination config))
           (recur all-events navigator :next {})
           all-events)))))
 

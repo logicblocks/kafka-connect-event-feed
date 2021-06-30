@@ -131,9 +131,7 @@
 (defn commit-record [state-atom record metadata]
   (update-state state-atom
     (fn [state]
-      (assoc state
-        :records-committed
-        (inc (:records-committed state)))))
+      (update-in state [:records-committed] inc)))
   (log/debugf "EventFeedSourceTask[name: %s] committing record: %s, %s"
     (efc/connector-name (config state-atom))
     (pr-str record)
