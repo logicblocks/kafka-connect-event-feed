@@ -346,11 +346,11 @@
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
          :config
-               {:connector.class               tcn/connector-class
-                :topic.name                    topic-name
-                :eventfeed.discovery.url       (tr/discovery-href wiremock-url)
-                :eventfeed.events.per.page     2
-                :events.fields.offset.jsonpath "$.payload.offset"}}
+         {:connector.class               tcn/connector-class
+          :topic.name                    topic-name
+          :eventfeed.discovery.url       (tr/discovery-href wiremock-url)
+          :eventfeed.events.per.page     2
+          :events.fields.offset.jsonpath "$.payload.offset"}}
         (let [messages (tc/consume-n kafka topic-name 3)
               message-payloads (map #(get-in % [:value :payload]) messages)]
           (is (= [(haljson/resource->map event-resource-1)

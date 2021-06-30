@@ -24,6 +24,7 @@
     (list? x) (ArrayList. ^Collection (map clojure-data->java-data x))
     (set? x) (HashSet. ^Collection (map clojure-data->java-data x))
     (seq? x) (LinkedList. (map clojure-data->java-data x))
+    (number? x) (Integer/parseInt (str x))
     :else x))
 
 (defn java-data->clojure-data [^Object o]
