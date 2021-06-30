@@ -29,27 +29,48 @@
 (defn offset [state-atom]
   (:offset (state state-atom)))
 
+(defn records-committed [state-atom]
+  (:records-committed (state state-atom)))
+
 (defn initialize [state-atom context]
   (let [offset-map (context-offset-map context)
         offset (:offset offset-map)]
     (log/infof "EventFeedSourceTask[config: %s] initializing with offset: %s..."
       (pr-str (context-config context))
       (or offset "nil"))
-    (update-state state-atom assoc :offset offset)))
+    (update-state state-atom assoc
+      :offset offset)))
 
 (defn start [state-atom props]
   (let [config (efc/configuration props)]
-    (log/infof "EventFeedSourceTask[config: %s] starting..."
+    (log/infof "EventFeedSourceTask[name: %s] has configuration: %s"
+      (efc/connector-name config)
       (pr-str config))
-    (update-state state-atom assoc :config config)))
+    (log/infof "EventFeedSourceTask[name: %s] starting..."
+      (efc/connector-name config))
+    (update-state state-atom assoc
+      :config config
+      :records-committed 0)))
 
 (defn stop [state-atom]
-  (log/infof "EventFeedSourceTask[config: %s] stopping..."
-    (pr-str (config state-atom)))
+  (log/infof "EventFeedSourceTask[name: %s] stopping..."
+    (efc/connector-name (config state-atom)))
   (update-state state-atom assoc :config nil))
 
-(defn wait-interval [_]
-  (Thread/sleep 200))
+(defn report-commit-count [state-atom]
+  (log/infof
+    "EventFeedSourceTask[name: %s] committed %s records to topic since start."
+    (efc/connector-name (config state-atom))
+    (records-committed state-atom)))
+
+(defn wait-interval [state-atom]
+  (let [interval-ms 200]
+    (log/infof
+      (str "EventFeedSourceTask[name: %s] waiting %s ms before looking for "
+        "new events...")
+      (efc/connector-name (config state-atom))
+      interval-ms)
+    (Thread/sleep interval-ms)))
 
 (defn fetch-events [state-atom]
   (let [config (config state-atom)
@@ -66,11 +87,14 @@
           new-offset (efe/event->offset config (last events))]
       (if (empty? events)
         (do
-          (log/debugf "EventFeedSourceTask[name: %s] found no new events."
+          (log/infof "EventFeedSourceTask[name: %s] found no new events."
             (efc/connector-name config))
           [[] nil])
         (do
-          (log/debugf "EventFeedSourceTask[name: %s] found new events: %s"
+          (log/infof "EventFeedSourceTask[name: %s] found %s new events."
+            (efc/connector-name config)
+            (count events))
+          (log/debugf "EventFeedSourceTask[name: %s] new events are: %s"
             (efc/connector-name config)
             (pr-str events))
           [records new-offset])))))
@@ -86,6 +110,7 @@
 (defn poll [state-atom]
   (try
     (do
+      (report-commit-count state-atom)
       (wait-interval state-atom)
       (let [[records offset] (fetch-events state-atom)]
         (commit-offset state-atom offset)
@@ -98,12 +123,17 @@
         (Throwable->map t)))))
 
 (defn commit [state-atom]
-  (log/debugf
-    "EventFeedSourceTask[name: %s] committing records up to offset: %s"
+  (log/infof
+    "EventFeedSourceTask[name: %s] committed records up to offset: %s"
     (efc/connector-name (config state-atom))
     (offset state-atom)))
 
 (defn commit-record [state-atom record metadata]
+  (update-state state-atom
+    (fn [state]
+      (assoc state
+        :records-committed
+        (inc (:records-committed state)))))
   (log/debugf "EventFeedSourceTask[name: %s] committing record: %s, %s"
     (efc/connector-name (config state-atom))
     (pr-str record)

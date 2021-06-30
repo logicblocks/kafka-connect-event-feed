@@ -11,8 +11,11 @@
 
 (defn start [state-atom props]
   (let [config (efc/configuration props)]
-    (log/infof "EventFeedSourceConnector[config: %s] starting..."
+    (log/infof "EventFeedSourceConnector[name: %s] has configuration: %s"
+      (efc/connector-name config)
       (pr-str config))
+    (log/infof "EventFeedSourceConnector[name: %s] starting..."
+      (efc/connector-name config))
     (reset! state-atom
       {:config config
        :properties props})))
@@ -20,8 +23,8 @@
 (defn stop [state-atom]
   (let [state (deref state-atom)
         config (:config state)]
-    (log/infof "EventFeedSourceConnector[config: %s] stopping..."
-      (pr-str config))
+    (log/infof "EventFeedSourceConnector[name: %s] stopping..."
+      (efc/connector-name config))
     (reset! state-atom nil)))
 
 (defn config [_]
