@@ -65,10 +65,10 @@
 
 (defn event-resource
   [base-url {:keys [id streamId type payload]
-             :or   {id        (td/random-event-id)
+             :or   {id       (td/random-event-id)
                     streamId (td/random-stream-id)
-                    type      :event-type
-                    payload   {}}}]
+                    type     :event-type
+                    payload  {}}}]
   (-> (hal/new-resource (event-href base-url id))
     (hal/add-link :discovery (discovery-href base-url))
     (hal/add-properties
