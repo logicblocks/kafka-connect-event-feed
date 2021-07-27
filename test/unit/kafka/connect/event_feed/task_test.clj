@@ -1,15 +1,15 @@
-(ns kafka.connect.task.source-task-test
+(ns kafka.connect.event-feed.task-test
   (:require
    [clojure.test :refer :all]
 
    [clj-wiremock.core :as wmc]
    [clj-wiremock.utils :as wmu]
+   [clj-wiremock.fixtures :as wmf]
 
    [kafka.connect.event-feed.test.resources :as tr]
    [kafka.connect.event-feed.test.data :as td]
    [kafka.connect.event-feed.test.stubs :as ts]
-   [kafka.connect.event-feed.utils :as efu]
-   [clj-wiremock.fixtures :as wmf])
+   [kafka.connect.event-feed.utils :as efu])
   (:import
    [io.logicblocks.kafka.connect.eventfeed EventFeedSourceTask]))
 
@@ -116,6 +116,3 @@
         (is (= [event-resource-1-id
                 event-resource-2-id]
               message-payloads))))))
-
-(comment
-  (compile 'kafka.connect.event-feed.task))

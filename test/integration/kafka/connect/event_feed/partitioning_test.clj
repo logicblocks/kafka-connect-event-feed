@@ -62,12 +62,12 @@
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
          :config
-               {:connector.class                           tcn/connector-class
-                :topic.name                                topic-name
-                :topic.creation.default.partitions         2
-                :topic.creation.default.replication.factor 1
-                :eventfeed.discovery.url                   discovery-href
-                :eventfeed.events.per.page                 5}}
+         {:connector.class                           tcn/connector-class
+          :topic.name                                topic-name
+          :topic.creation.default.partitions         2
+          :topic.creation.default.replication.factor 1
+          :eventfeed.discovery.url                   discovery-href
+          :eventfeed.events.per.page                 5}}
         (let [messages (tc/consume-n kafka topic-name 4
                          :max-attempts 20)
               partition-a-messages (take 2 messages)
@@ -117,13 +117,13 @@
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
          :config
-               {:connector.class                           tcn/connector-class
-                :topic.name                                topic-name
-                :topic.creation.default.partitions         2
-                :topic.creation.default.replication.factor 1
-                :eventfeed.discovery.url                   discovery-href
-                :eventfeed.events.per.page                 5
-                :events.fields.key.jsonpath                key-field-jsonpath}}
+         {:connector.class                           tcn/connector-class
+          :topic.name                                topic-name
+          :topic.creation.default.partitions         2
+          :topic.creation.default.replication.factor 1
+          :eventfeed.discovery.url                   discovery-href
+          :eventfeed.events.per.page                 5
+          :events.fields.key.jsonpath                key-field-jsonpath}}
         (let [messages (tc/consume-n kafka topic-name 4
                          :max-attempts 20)
               partition-a-messages (take 2 messages)
@@ -171,19 +171,15 @@
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
          :config
-               {:connector.class                           tcn/connector-class
-                :topic.name                                topic-name
-                :topic.creation.default.partitions         2
-                :topic.creation.default.replication.factor 1
-                :eventfeed.discovery.url                   discovery-href
-                :eventfeed.events.per.page                 5}}
+         {:connector.class                           tcn/connector-class
+          :topic.name                                topic-name
+          :topic.creation.default.partitions         2
+          :topic.creation.default.replication.factor 1
+          :eventfeed.discovery.url                   discovery-href
+          :eventfeed.events.per.page                 5}}
         (let [messages (tc/consume-n kafka topic-name 4
                          :max-attempts 20)
               partition-a-messages (take 2 messages)
               partition-b-messages (drop 2 messages)]
           (is (every? #(= (:partition %) 0) partition-a-messages))
           (is (every? #(= (:partition %) 1) partition-b-messages)))))))
-
-(comment
-  (compile 'kafka.connect.event-feed.task)
-  (compile 'kafka.connect.event-feed.connector))

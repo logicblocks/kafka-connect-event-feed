@@ -27,37 +27,54 @@
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
    :shared
-   [:provided {:dependencies   [[org.clojure/test.check "1.1.0"]
+   [:provided {:dependencies
+               [[org.clojure/test.check "1.1.0"]
 
-                                [org.slf4j/jcl-over-slf4j "1.7.30"]
-                                [org.slf4j/jul-to-slf4j "1.7.30"]
-                                [org.slf4j/log4j-over-slf4j "1.7.30"]
-                                [ch.qos.logback/logback-classic "1.2.3"]
+                [org.slf4j/jcl-over-slf4j "1.7.30"]
+                [org.slf4j/jul-to-slf4j "1.7.30"]
+                [org.slf4j/log4j-over-slf4j "1.7.30"]
+                [ch.qos.logback/logback-classic "1.2.3"]
 
-                                [nrepl "0.8.3"]
-                                [eftest "0.5.9"]
+                [nrepl "0.8.3"]
+                [eftest "0.5.9"]
 
-                                [camel-snake-kebab "0.4.2"]
-                                [uritemplate-clj "1.3.0"]
+                [halboy "5.1.1"
+                 :exclusions [cheshire
+                              org.clojure/core.cache]]
 
-                                [http-kit.fake "0.2.2"]]
-               :resource-paths ["test-resources"]}]
+                ; TODO - get rid of these in shared
+                [kelveden/clj-wiremock "1.7.0"
+                 :exclusions [com.fasterxml.jackson.core/jackson-annotations
+                              net.sf.jopt-simple/jopt-simple
+                              org.apache.commons/commons-lang3
+                              org.apache.httpcomponents/httpcore
+                              org.eclipse.jetty/jetty-server
+                              org.eclipse.jetty/jetty-servlet
+                              org.eclipse.jetty/jetty-servlets
+                              riddley]]
+
+                [org.javassist/javassist "3.26.0-GA"]
+
+                [io.logicblocks/kafka.testing "0.0.2"]
+
+                [fundingcircle/jackdaw "0.8.0"
+                 :exclusions [org.apache.kafka/kafka-clients]]
+                [org.sourcelab/kafka-connect-client "3.1.1"]
+                ; TODO - up to here
+
+                [camel-snake-kebab "0.4.2"]
+                [uritemplate-clj "1.3.0"]
+
+                [http-kit.fake "0.2.2"]]
+
+               :resource-paths
+               ["test-resources"]}]
    :unit
    [:shared {:test-paths ^:replace ["test/shared"
-                                    "test/unit"]}]
+                                    "test/unit"]
+             :eftest       {:multithread? false}}]
    :integration
-   [:shared {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.30"]
-                            [org.slf4j/jul-to-slf4j "1.7.30"]
-                            [org.slf4j/log4j-over-slf4j "1.7.30"]
-                            [ch.qos.logback/logback-classic "1.2.3"]
-
-                            [io.logicblocks/kafka.testing "0.0.2"]
-
-                            [fundingcircle/jackdaw "0.8.0"]
-                            [org.sourcelab/kafka-connect-client "3.1.1"]
-
-                            [kelveden/clj-wiremock "1.7.0"]]
-             :test-paths   ^:replace ["test/shared"
+   [:shared {:test-paths   ^:replace ["test/shared"
                                       "test/integration"]
              :eftest       {:multithread? false}}]
    :dev
