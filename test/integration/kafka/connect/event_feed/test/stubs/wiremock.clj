@@ -1,4 +1,4 @@
-(ns kafka.connect.event-feed.test.stubs
+(ns kafka.connect.event-feed.test.stubs.wiremock
   (:require
    [clj-wiremock.utils :as wmu]
 

@@ -6,7 +6,7 @@
 
    [kafka.connect.event-feed.test.resources :as tr]
    [kafka.connect.event-feed.test.data :as td]
-   [kafka.connect.event-feed.test.stubs :as ts]
+   [kafka.connect.event-feed.test.stubs.httpkit :as ts]
    [kafka.connect.event-feed.utils :as efu])
   (:import
    [io.logicblocks.kafka.connect.eventfeed EventFeedSourceTask]))

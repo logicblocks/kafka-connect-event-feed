@@ -68,6 +68,13 @@
       :documentation (str "The name of the topic to populate with the "
                        "events in the event feed."))
     (define
+      :name "eventfeed.fetch.interval.ms"
+      :type :type/long
+      :default-value 200
+      :importance :importance/medium
+      :documentation (str "The number of milliseconds to wait between "
+                       "attempts to fetch new events from the event feed."))
+    (define
       :name "eventfeed.discovery.url"
       :type :type/string
       :importance :importance/high
@@ -112,6 +119,9 @@
 
 (defn topic-name [config]
   (:topic.name config))
+
+(defn event-feed-fetch-interval-milliseconds [config]
+  (:eventfeed.fetch.interval.ms config))
 
 (defn event-feed-discovery-url [config]
   (:eventfeed.discovery.url config))

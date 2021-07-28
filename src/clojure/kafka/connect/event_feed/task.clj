@@ -64,11 +64,12 @@
     (records-committed state-atom)))
 
 (defn wait-interval [state-atom]
-  (let [interval-ms 200]
+  (let [config (config state-atom)
+        interval-ms (efc/event-feed-fetch-interval-milliseconds config)]
     (log/infof
       (str "EventFeedSourceTask[name: %s] waiting %s ms before looking for "
         "new events...")
-      (efc/connector-name (config state-atom))
+      (efc/connector-name config)
       interval-ms)
     (Thread/sleep interval-ms)))
 

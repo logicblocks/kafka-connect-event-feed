@@ -1,4 +1,4 @@
-(ns kafka.connect.event-feed.test.stubs
+(ns kafka.connect.event-feed.test.stubs.httpkit
   (:require
    [halboy.json :as haljson]
 

@@ -4,7 +4,7 @@ ToDo
 Tasks
 -----
 
-* Make poll interval configurable?
+* Make max events per fetch configurable
 * Make link names configurable
 * Make parameter names configurable
 * Allow event offset to be reset?

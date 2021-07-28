@@ -11,7 +11,7 @@
    [kafka.connect.event-feed.test.logging]
    [kafka.connect.event-feed.test.resources :as tr]
    [kafka.connect.event-feed.test.consumer :as tc]
-   [kafka.connect.event-feed.test.stubs :as ts]
+   [kafka.connect.event-feed.test.stubs.wiremock :as ts]
    [kafka.connect.event-feed.test.data :as td]
    [kafka.connect.event-feed.test.connector :as tcn]))
 
