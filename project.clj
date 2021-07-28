@@ -26,6 +26,7 @@
   :profiles
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
+   
    :shared
    [:provided {:dependencies
                [[org.clojure/test.check "1.1.0"]
@@ -42,41 +43,51 @@
                  :exclusions [cheshire
                               org.clojure/core.cache]]
 
-                ; TODO - get rid of these in shared
-                [kelveden/clj-wiremock "1.7.0"
-                 :exclusions [com.fasterxml.jackson.core/jackson-annotations
-                              net.sf.jopt-simple/jopt-simple
-                              org.apache.commons/commons-lang3
-                              org.apache.httpcomponents/httpcore
-                              org.eclipse.jetty/jetty-server
-                              org.eclipse.jetty/jetty-servlet
-                              org.eclipse.jetty/jetty-servlets
-                              riddley]]
-
-                [org.javassist/javassist "3.26.0-GA"]
-
-                [io.logicblocks/kafka.testing "0.0.2"]
-
-                [fundingcircle/jackdaw "0.8.0"
-                 :exclusions [org.apache.kafka/kafka-clients]]
-                [org.sourcelab/kafka-connect-client "3.1.1"]
-                ; TODO - up to here
-
                 [camel-snake-kebab "0.4.2"]
                 [uritemplate-clj "1.3.0"]
-
-                [http-kit.fake "0.2.2"]]
+                [org.bovinegenius/exploding-fish "0.3.6"]]
 
                :resource-paths
                ["test-resources"]}]
+
    :unit
-   [:shared {:test-paths ^:replace ["test/shared"
-                                    "test/unit"]
-             :eftest       {:multithread? false}}]
+   [:shared {:dependencies
+             [[http-kit.fake "0.2.2"]]
+
+             :test-paths
+             ^:replace ["test/shared"
+                        "test/unit"]
+
+             :eftest
+             {:multithread? false}}]
+
    :integration
-   [:shared {:test-paths   ^:replace ["test/shared"
-                                      "test/integration"]
-             :eftest       {:multithread? false}}]
+   [:shared {:dependencies
+             [[kelveden/clj-wiremock "1.7.0"
+               :exclusions [com.fasterxml.jackson.core/jackson-annotations
+                            net.sf.jopt-simple/jopt-simple
+                            org.apache.commons/commons-lang3
+                            org.apache.httpcomponents/httpcore
+                            org.eclipse.jetty/jetty-server
+                            org.eclipse.jetty/jetty-servlet
+                            org.eclipse.jetty/jetty-servlets
+                            riddley]]
+
+              [org.javassist/javassist "3.26.0-GA"]
+
+              [io.logicblocks/kafka.testing "0.0.2"]
+
+              [fundingcircle/jackdaw "0.8.0"
+               :exclusions [org.apache.kafka/kafka-clients]]
+              [org.sourcelab/kafka-connect-client "3.1.1"]]
+
+             :test-paths
+             ^:replace ["test/shared"
+                        "test/integration"]
+
+             :eftest
+             {:multithread? false}}]
+
    :dev
    [:unit :integration {:test-paths ^:replace ["test/shared"
                                                "test/unit"
