@@ -131,7 +131,8 @@
   (:polling.interval.ms config))
 
 (defn polling-maximum-events-per-poll [config]
-  (:polling.max.events.per.poll config))
+  (let [maximum-events (:polling.max.events.per.poll config)]
+    (if (neg? maximum-events) (Long/MAX_VALUE) maximum-events)))
 
 (defn event-feed-discovery-url [config]
   (:eventfeed.discovery.url config))

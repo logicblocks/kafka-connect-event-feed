@@ -326,3 +326,68 @@
               message-payloads (map #(get-in % [:value :payload]) messages)]
           (is (= (map haljson/resource->map event-resources)
                 message-payloads)))))))
+
+(deftest fetches-all-available-events-per-poll-when-negative-max-provided
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events
+        events-per-page 600
+        max-events-per-poll -1
+
+        event-resources
+        (take 1500
+          (repeatedly
+            (fn []
+              (tr/event-resource wiremock-url))))
+
+        event-resources-1-600
+        (take 600 event-resources)
+        event-resource-600-id
+        (hal/get-property (last event-resources-1-600) :id)
+
+        event-resources-601-1200
+        (take 600 (drop 600 event-resources))
+        event-resource-1200-id
+        (hal/get-property (last event-resources-601-1200) :id)
+
+        event-resources-1201-1500
+        (take 300 (drop 1200 event-resources))
+        event-resource-1500-id
+        (hal/get-property (last event-resources-1201-1500) :id)]
+    (wmc/with-stubs
+      (concat
+        [(ts/discovery-resource wiremock-server)
+         (ts/events-resource wiremock-server
+           :events-link-parameters {:pick events-per-page}
+           :next-link-parameters
+           {:pick events-per-page :since event-resource-600-id}
+           :event-resources event-resources-1-600)
+         (ts/events-resource wiremock-server
+           :events-link-parameters
+           {:pick events-per-page :since event-resource-600-id}
+           :next-link-parameters
+           {:pick events-per-page :since event-resource-1200-id}
+           :event-resources event-resources-601-1200)
+         (ts/events-resource wiremock-server
+           :events-link-parameters
+           {:pick events-per-page :since event-resource-1200-id}
+           :event-resources event-resources-1201-1500)
+         (ts/events-resource wiremock-server
+           :events-link-parameters
+           {:pick events-per-page :since event-resource-1500-id}
+           :event-resources [])])
+
+      (tcn/with-connector kafka-connect
+        {:name   :event-feed-source
+         :config {:connector.class             tcn/connector-class
+                  :topic.name                  topic-name
+                  :polling.max.events.per.poll max-events-per-poll
+                  :eventfeed.discovery.url     (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page   events-per-page}}
+        (let [messages (tc/consume-n kafka topic-name 1500)
+              message-payloads (map #(get-in % [:value :payload]) messages)]
+          (is (= (map haljson/resource->map event-resources)
+                message-payloads)))))))
