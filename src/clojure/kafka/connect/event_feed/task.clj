@@ -65,7 +65,7 @@
 
 (defn wait-interval [state-atom]
   (let [config (config state-atom)
-        interval-ms (efc/event-feed-fetch-interval-milliseconds config)]
+        interval-ms (efc/polling-fetch-interval-milliseconds config)]
     (log/infof
       (str "EventFeedSourceTask[name: %s] waiting %s ms before looking for "
         "new events...")

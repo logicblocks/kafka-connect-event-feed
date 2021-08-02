@@ -9,10 +9,13 @@
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
 
-(defn load-more-events? [resource pagination]
-  (and
-    pagination
-    (not (nil? (hal/get-link resource :next)))))
+(defn load-more-events? [resource all-events config]
+  (let [pagination (efc/event-feed-pagination config)
+        maximum-events (efc/polling-maximum-events-per-poll config)]
+    (and
+      pagination
+      (< (count all-events) maximum-events)
+      (not (nil? (hal/get-link resource :next))))))
 
 (defn load-page-of-events
   ([navigator link]
@@ -25,7 +28,8 @@
 
 (defn load-new-events [config offset]
   (let [discovery-url (efc/event-feed-discovery-url config)
-        events-per-page (efc/event-feed-events-per-page config)]
+        events-per-page (efc/event-feed-events-per-page config)
+        maximum-events (efc/polling-maximum-events-per-poll config)]
     (loop [all-events []
            navigator (halnav/discover discovery-url)
            link :events
@@ -35,11 +39,9 @@
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)
             all-events (into all-events events)]
-        (if (load-more-events?
-              resource
-              (efc/event-feed-pagination config))
+        (if (load-more-events? resource all-events config)
           (recur all-events navigator :next {})
-          all-events)))))
+          (take maximum-events all-events))))))
 
 (defn event->key [config event]
   (jp/at-path
