@@ -9,10 +9,6 @@
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
 
-(defn has-pagination-enabled? [config]
-  (let [pagination (efc/event-feed-pagination config)]
-    pagination))
-
 (defn has-more-events-available? [resource]
   (not (nil? (hal/get-link resource :next))))
 
@@ -21,7 +17,6 @@
 
 (defn load-more-events? [resource events config]
   (and
-    (has-pagination-enabled? config)
     (has-not-exceeded-maximum-events-per-poll? events config)
     (has-more-events-available? resource)))
 

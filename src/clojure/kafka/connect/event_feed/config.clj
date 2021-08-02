@@ -140,9 +140,6 @@
 (defn event-feed-events-per-page [config]
   (:eventfeed.events.per.page config))
 
-(defn event-feed-pagination [config]
-  (:eventfeed.pagination config))
-
 (defn event-offset-field-jsonpath [config]
   (:events.fields.offset.jsonpath config))
 
