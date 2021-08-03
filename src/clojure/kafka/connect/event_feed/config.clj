@@ -124,6 +124,14 @@
       :documentation (str "The name of the next link in the events "
                        "resource of the API that exposes an event feed."))
     (define
+      :name "eventfeed.embedded.resource.name.events"
+      :type :type/string
+      :default-value "events"
+      :importance :importance/medium
+      :documentation (str "The name of the embedded resource that contains "
+                       "events in the events resource of the API that exposes "
+                       "an event feed."))
+    (define
       :name "events.fields.offset.jsonpath"
       :type :type/string
       :default-value "$.id"
@@ -174,6 +182,9 @@
 
 (defn event-feed-events-next-link-name [config]
   (keyword (:eventfeed.link.name.events.next config)))
+
+(defn event-feed-events-embedded-resource-name [config]
+  (keyword (:eventfeed.embedded.resource.name.events config)))
 
 (defn event-offset-field-jsonpath [config]
   (:events.fields.offset.jsonpath config))

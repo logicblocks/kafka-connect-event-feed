@@ -22,13 +22,12 @@
     (has-more-events-available? resource config)))
 
 (defn load-page-of-events
-  ([navigator link]
-   (load-page-of-events navigator link {}))
-  ([navigator link parameters]
-   (let [navigator (halnav/get navigator link parameters)
-         resource (halnav/resource navigator)
-         events (hal/get-resource resource :events)]
-     [navigator resource events])))
+  [navigator link parameters config]
+  (let [navigator (halnav/get navigator link parameters)
+        resource (halnav/resource navigator)
+        events (hal/get-resource resource
+                 (efc/event-feed-events-embedded-resource-name config))]
+    [navigator resource events]))
 
 (defn load-new-events [config offset]
   (let [discovery-url
@@ -51,8 +50,8 @@
            parameters
            (cond-> {per-page-template-parameter-name events-per-page}
              (not (nil? offset)) (assoc since-template-parameter-name offset))]
-      (let [[navigator resource events] (load-page-of-events
-                                          navigator link parameters)
+      (let [[navigator resource events]
+            (load-page-of-events navigator link parameters config)
             all-events (into all-events events)]
         (if (load-more-events? resource all-events config)
           (recur all-events navigator events-next-link-name {})

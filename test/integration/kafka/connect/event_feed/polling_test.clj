@@ -48,13 +48,13 @@
       [(ts/discovery-resource wiremock-server)
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2}}
-         :event-resources [event-resource-1])
+         :events {:resources [event-resource-1]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-1-id}}
-         :event-resources [event-resource-2 event-resource-3])
+         :events {:resources [event-resource-2 event-resource-3]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-3-id}}
-         :event-resources [])]
+         :events {:resources []})]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
          :config {:connector.class           tcn/connector-class
@@ -91,13 +91,13 @@
       [(ts/discovery-resource wiremock-server)
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2}}
-         :event-resources [event-resource-1])
+         :events {:resources [event-resource-1]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-1-id}}
-         :event-resources [event-resource-2 event-resource-3])
+         :events {:resources [event-resource-2 event-resource-3]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-3-id}}
-         :event-resources [])]
+         :events {:resources []})]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
          :config {:connector.class           tcn/connector-class
@@ -151,13 +151,13 @@
       [(ts/discovery-resource wiremock-server)
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2}}
-         :event-resources [event-resource-1])
+         :events {:resources [event-resource-1]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-1-id}}
-         :event-resources [event-resource-2 event-resource-3])
+         :events {:resources [event-resource-2 event-resource-3]})
        (ts/events-resource wiremock-server
          :events-link {:parameters {:per-page 2 :since event-resource-3-id}}
-         :event-resources [])]
+         :events {:resources []})]
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
          :config {:connector.class           tcn/connector-class
@@ -231,7 +231,7 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-600-id}}
-           :event-resources event-resources-1-600)
+           :events {:resources event-resources-1-600})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
@@ -239,17 +239,17 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-1200-id}}
-           :event-resources event-resources-601-1200)
+           :events {:resources event-resources-601-1200})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1000-id}}
-           :event-resources event-resources-1001-1500)
+           :events {:resources event-resources-1001-1500})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1500-id}}
-           :event-resources [])])
+           :events {:resources []})])
 
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
@@ -305,7 +305,7 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-600-id}}
-           :event-resources event-resources-1-600)
+           :events {:resources event-resources-1-600})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
@@ -313,17 +313,17 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-1200-id}}
-           :event-resources event-resources-601-1200)
+           :events {:resources event-resources-601-1200})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1100-id}}
-           :event-resources event-resources-1101-1500)
+           :events {:resources event-resources-1101-1500})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1500-id}}
-           :event-resources [])])
+           :events {:resources []})])
 
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source
@@ -375,7 +375,7 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-600-id}}
-           :event-resources event-resources-1-600)
+           :events {:resources event-resources-1-600})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
@@ -383,17 +383,17 @@
            :next-link {:parameters
                        {:per-page events-per-page
                         :since event-resource-1200-id}}
-           :event-resources event-resources-601-1200)
+           :events {:resources event-resources-601-1200})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1200-id}}
-           :event-resources event-resources-1201-1500)
+           :events {:resources event-resources-1201-1500})
          (ts/events-resource wiremock-server
            :events-link {:parameters
                          {:per-page events-per-page
                           :since event-resource-1500-id}}
-           :event-resources [])])
+           :events {:resources []})])
 
       (tcn/with-connector kafka-connect
         {:name   :event-feed-source

@@ -20,7 +20,7 @@
 (defn events-resource
   [wiremock-server & {:keys [events-link
                              next-link
-                             event-resources]}]
+                             events]}]
   (let [wiremock-url (wmu/base-url wiremock-server)]
     {:server wiremock-server
      :req    [:GET (tr/events-path events-link)]
@@ -29,4 +29,4 @@
                      (tr/events-resource wiremock-url
                        :events-link events-link
                        :next-link next-link
-                       :event-resources event-resources))}]}))
+                       :events events))}]}))

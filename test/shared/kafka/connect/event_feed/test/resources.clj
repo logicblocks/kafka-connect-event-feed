@@ -67,18 +67,20 @@
 (defn events-resource
   ([base-url & {:keys [events-link
                        next-link
-                       event-resources]}]
-   (let [next-link-name (or (:name next-link) :next)]
+                       events]}]
+   (let [next-link-name (or (:name next-link) :next)
+         embedded-resource-name (or (:resource-name events) :events)
+         resources (or (:resources events) [])]
      (-> (hal/new-resource (events-href base-url events-link))
        (hal/add-href :discovery (discovery-href base-url))
-       (hal/add-link :events
-         (map (fn [event-resource]
-                {:href (hal/get-href event-resource :self)})
-           event-resources))
+       (hal/add-link embedded-resource-name
+         (map (fn [resource]
+                {:href (hal/get-href resource :self)})
+           resources))
        (hal/add-link next-link-name
          (when (not (nil? next-link))
            (events-href base-url next-link)))
-       (hal/add-resource :events event-resources)))))
+       (hal/add-resource embedded-resource-name resources)))))
 
 (defn event-resource
   ([base-url] (event-resource base-url {}))
