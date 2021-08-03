@@ -30,8 +30,8 @@
 (defn events-path
   ([] (events-path {}))
   ([{:keys [parameters]
-     :or {parameters {}}
-     :as options}]
+     :or   {parameters {}}
+     :as   options}]
    (populate (events-path-template options)
      parameters)))
 
@@ -58,25 +58,27 @@
   ([base-url]
    (discovery-resource base-url {}))
   ([base-url {:keys [events-link]}]
-   (-> (hal/new-resource (discovery-href base-url))
-     (hal/add-link :events
-       {:href      (events-template-href base-url events-link)
-        :templated true}))))
+   (let [events-link-name (or (:name events-link) :events)]
+     (-> (hal/new-resource (discovery-href base-url))
+       (hal/add-link events-link-name
+         {:href      (events-template-href base-url events-link)
+          :templated true})))))
 
 (defn events-resource
   ([base-url & {:keys [events-link
                        next-link
                        event-resources]}]
-   (-> (hal/new-resource (events-href base-url events-link))
-     (hal/add-href :discovery (discovery-href base-url))
-     (hal/add-link :events
-       (map (fn [event-resource]
-              {:href (hal/get-href event-resource :self)})
-         event-resources))
-     (hal/add-link :next
-       (when (not (nil? next-link))
-         (events-href base-url next-link)))
-     (hal/add-resource :events event-resources))))
+   (let [next-link-name (or (:name next-link) :next)]
+     (-> (hal/new-resource (events-href base-url events-link))
+       (hal/add-href :discovery (discovery-href base-url))
+       (hal/add-link :events
+         (map (fn [event-resource]
+                {:href (hal/get-href event-resource :self)})
+           event-resources))
+       (hal/add-link next-link-name
+         (when (not (nil? next-link))
+           (events-href base-url next-link)))
+       (hal/add-resource :events event-resources)))))
 
 (defn event-resource
   ([base-url] (event-resource base-url {}))

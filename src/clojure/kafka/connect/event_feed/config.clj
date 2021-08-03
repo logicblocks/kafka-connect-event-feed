@@ -45,7 +45,7 @@
   (ConfigDef.))
 
 (defn- define
-  [config-def
+  [^ConfigDef config-def
    & {:keys [name type default-value importance documentation]
       :or   {default-value nil}}]
   (if default-value
@@ -94,21 +94,35 @@
       :documentation (str "The number of events to request in each request to "
                        "the event feed."))
     (define
-      :name "eventfeed.query.parameter.name.per.page"
+      :name "eventfeed.template.parameter.name.per.page"
       :type :type/string
       :default-value "perPage"
       :importance :importance/medium
-      :documentation (str "The name of the query parameter in the events "
-                       "template href that determines the number of events "
-                       "to fetch per page."))
+      :documentation (str "The name of the template parameter in the "
+                       "templated events link that determines the number of "
+                       "events to fetch per page."))
     (define
-      :name "eventfeed.query.parameter.name.since"
+      :name "eventfeed.template.parameter.name.since"
       :type :type/string
       :default-value "since"
       :importance :importance/medium
-      :documentation (str "The name of the query parameter in the events "
-                       "template href that determines the identifier of the "
-                       "last event that was seen."))
+      :documentation (str "The name of the template parameter in the "
+                       "templated events link that determines the identifier "
+                       "of the last event that was seen."))
+    (define
+      :name "eventfeed.link.name.discovery.events"
+      :type :type/string
+      :default-value "events"
+      :importance :importance/medium
+      :documentation (str "The name of the events link in the discovery "
+                       "resource of the API that exposes an event feed."))
+    (define
+      :name "eventfeed.link.name.events.next"
+      :type :type/string
+      :default-value "next"
+      :importance :importance/medium
+      :documentation (str "The name of the next link in the events "
+                       "resource of the API that exposes an event feed."))
     (define
       :name "events.fields.offset.jsonpath"
       :type :type/string
@@ -149,11 +163,17 @@
 (defn event-feed-events-per-page [config]
   (:eventfeed.events.per.page config))
 
-(defn event-feed-per-page-query-parameter-name [config]
-  (keyword (:eventfeed.query.parameter.name.per.page config)))
+(defn event-feed-per-page-template-parameter-name [config]
+  (keyword (:eventfeed.template.parameter.name.per.page config)))
 
-(defn event-feed-since-query-parameter-name [config]
-  (keyword (:eventfeed.query.parameter.name.since config)))
+(defn event-feed-since-template-parameter-name [config]
+  (keyword (:eventfeed.template.parameter.name.since config)))
+
+(defn event-feed-discovery-events-link-name [config]
+  (keyword (:eventfeed.link.name.discovery.events config)))
+
+(defn event-feed-events-next-link-name [config]
+  (keyword (:eventfeed.link.name.events.next config)))
 
 (defn event-offset-field-jsonpath [config]
   (:events.fields.offset.jsonpath config))

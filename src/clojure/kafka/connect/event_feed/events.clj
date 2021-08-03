@@ -9,8 +9,9 @@
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.records :as efr]))
 
-(defn has-more-events-available? [resource]
-  (not (nil? (hal/get-link resource :next))))
+(defn has-more-events-available? [resource config]
+  (not (nil? (hal/get-link resource
+               (efc/event-feed-events-next-link-name config)))))
 
 (defn has-not-exceeded-maximum-events-per-poll? [events config]
   (< (count events) (efc/polling-maximum-events-per-poll config)))
@@ -18,7 +19,7 @@
 (defn load-more-events? [resource events config]
   (and
     (has-not-exceeded-maximum-events-per-poll? events config)
-    (has-more-events-available? resource)))
+    (has-more-events-available? resource config)))
 
 (defn load-page-of-events
   ([navigator link]
@@ -34,23 +35,27 @@
         (efc/event-feed-discovery-url config)
         events-per-page
         (efc/event-feed-events-per-page config)
-        per-page-query-parameter-name
-        (efc/event-feed-per-page-query-parameter-name config)
-        since-query-parameter-name
-        (efc/event-feed-since-query-parameter-name config)
+        per-page-template-parameter-name
+        (efc/event-feed-per-page-template-parameter-name config)
+        since-template-parameter-name
+        (efc/event-feed-since-template-parameter-name config)
+        discovery-events-link-name
+        (efc/event-feed-discovery-events-link-name config)
+        events-next-link-name
+        (efc/event-feed-events-next-link-name config)
         maximum-events
         (efc/polling-maximum-events-per-poll config)]
     (loop [all-events []
            navigator (halnav/discover discovery-url)
-           link :events
+           link discovery-events-link-name
            parameters
-           (cond-> {per-page-query-parameter-name events-per-page}
-             (not (nil? offset)) (assoc since-query-parameter-name offset))]
+           (cond-> {per-page-template-parameter-name events-per-page}
+             (not (nil? offset)) (assoc since-template-parameter-name offset))]
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)
             all-events (into all-events events)]
         (if (load-more-events? resource all-events config)
-          (recur all-events navigator :next {})
+          (recur all-events navigator events-next-link-name {})
           (take maximum-events all-events))))))
 
 (defn event->key [config event]

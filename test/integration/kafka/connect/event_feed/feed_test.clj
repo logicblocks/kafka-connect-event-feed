@@ -269,7 +269,7 @@
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
 
-(deftest uses-provided-parameter-name-for-per-page-parameter
+(deftest uses-provided-name-for-per-page-template-parameter
   (let [kafka (ktc/kafka @kafka-atom)
         kafka-connect (ktc/kafka-connect @kafka-atom)
         wiremock-server @wiremock-atom
@@ -328,7 +328,7 @@
           discovery-href
           :eventfeed.events.per.page
           events-per-page
-          :eventfeed.query.parameter.name.per.page
+          :eventfeed.template.parameter.name.per.page
           per-page-parameter-name}}
         (let [messages (tc/consume-n kafka topic-name 3)
               message-payloads (map #(get-in % [:value :payload]) messages)]
@@ -337,7 +337,7 @@
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
 
-(deftest uses-provided-parameter-name-for-since-parameter
+(deftest uses-provided-name-for-since-template-parameter
   (let [kafka (ktc/kafka @kafka-atom)
         kafka-connect (ktc/kafka-connect @kafka-atom)
         wiremock-server @wiremock-atom
@@ -360,42 +360,33 @@
         event-resource-3-id (td/random-uuid)
         event-resource-3 (tr/event-resource wiremock-url
                            {:id   event-resource-3-id
-                            :type :event-type-3})
-
-        discovery-resource
-        (ts/discovery-resource wiremock-server
-          {:events-link
-           {:parameter-names {:since :after}}})
-        events-resource-page-1
-        (ts/events-resource wiremock-server
-          :events-link {:parameters {:per-page events-per-page}}
-          :next-link {:parameters
-                      {:per-page events-per-page
-                       :after event-resource-2-id}
-                      :parameter-names
-                      {:since :after}}
-          :event-resources [event-resource-1 event-resource-2])
-        events-resource-page-2
-        (ts/events-resource wiremock-server
-          :events-link {:parameters
-                        {:per-page events-per-page
-                         :after event-resource-2-id}
-                        :parameter-names
-                        {:since :after}}
-          :event-resources [event-resource-3])
-        events-resource-terminator-page
-        (ts/events-resource wiremock-server
-          :events-link {:parameters
-                        {:per-page events-per-page
-                         :after event-resource-3-id}
-                        :parameter-names
-                        {:since :after}}
-          :event-resources [])]
+                            :type :event-type-3})]
     (wmc/with-stubs
-      [discovery-resource
-       events-resource-page-1
-       events-resource-page-2
-       events-resource-terminator-page]
+      [(ts/discovery-resource wiremock-server
+         {:events-link
+          {:parameter-names {:since :after}}})
+       (ts/events-resource wiremock-server
+         :events-link {:parameters {:per-page events-per-page}}
+         :next-link {:parameters
+                     {:per-page events-per-page
+                      :after    event-resource-2-id}
+                     :parameter-names
+                     {:since :after}}
+         :event-resources [event-resource-1 event-resource-2])
+       (ts/events-resource wiremock-server
+         :events-link {:parameters
+                       {:per-page events-per-page
+                        :after    event-resource-2-id}
+                       :parameter-names
+                       {:since :after}}
+         :event-resources [event-resource-3])
+       (ts/events-resource wiremock-server
+         :events-link {:parameters
+                       {:per-page events-per-page
+                        :after    event-resource-3-id}
+                       :parameter-names
+                       {:since :after}}
+         :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
          :config
@@ -407,11 +398,158 @@
           discovery-href
           :eventfeed.events.per.page
           events-per-page
-          :eventfeed.query.parameter.name.since
+          :eventfeed.template.parameter.name.since
           since-parameter-name}}
         (let [messages (tc/consume-n kafka topic-name 3)
               message-payloads (map #(get-in % [:value :payload]) messages)]
           (is (= [(haljson/resource->map event-resource-1)
                   (haljson/resource->map event-resource-2)
                   (haljson/resource->map event-resource-3)]
+                message-payloads)))))))
+
+(deftest uses-provided-name-for-discovery-events-link
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        discovery-href (tr/discovery-href wiremock-url)
+
+        topic-name :events
+        discovery-events-link-name :eventfeed
+        events-per-page 2
+
+        event-resource-1-id (td/random-uuid)
+        event-resource-1 (tr/event-resource wiremock-url
+                           {:id   event-resource-1-id
+                            :type :event-type-1})
+        event-resource-2-id (td/random-uuid)
+        event-resource-2 (tr/event-resource wiremock-url
+                           {:id   event-resource-2-id
+                            :type :event-type-2})
+        event-resource-3-id (td/random-uuid)
+        event-resource-3 (tr/event-resource wiremock-url
+                           {:id   event-resource-3-id
+                            :type :event-type-3})]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server
+         {:events-link {:name discovery-events-link-name}})
+       (ts/events-resource wiremock-server
+         :events-link {:parameters {:per-page events-per-page}}
+         :next-link
+         {:parameters {:per-page events-per-page :since event-resource-2-id}}
+         :event-resources [event-resource-1 event-resource-2])
+       (ts/events-resource wiremock-server
+         :events-link
+         {:parameters {:per-page events-per-page :since event-resource-2-id}}
+         :event-resources [event-resource-3])
+       (ts/events-resource wiremock-server
+         :events-link
+         {:parameters {:per-page events-per-page :since event-resource-3-id}}
+         :event-resources [])]
+      (tcn/with-connector kafka-connect
+        {:name :event-feed-source
+         :config
+         {:connector.class
+          tcn/connector-class
+          :topic.name
+          topic-name
+          :eventfeed.discovery.url
+          discovery-href
+          :eventfeed.events.per.page
+          events-per-page
+          :eventfeed.link.name.discovery.events
+          discovery-events-link-name}}
+        (let [messages (tc/consume-n kafka topic-name 3)
+              message-payloads (map #(get-in % [:value :payload]) messages)]
+          (is (= [(haljson/resource->map event-resource-1)
+                  (haljson/resource->map event-resource-2)
+                  (haljson/resource->map event-resource-3)]
+                message-payloads)))))))
+
+(deftest uses-provided-name-for-events-next-link
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        discovery-href (tr/discovery-href wiremock-url)
+
+        topic-name :events
+        events-next-link-name :nextpage
+        events-per-page 3
+        max-events-per-poll 4
+
+        event-resource-1-id (td/random-uuid)
+        event-resource-1 (tr/event-resource wiremock-url
+                           {:id   event-resource-1-id
+                            :type :event-type-1})
+        event-resource-2-id (td/random-uuid)
+        event-resource-2 (tr/event-resource wiremock-url
+                           {:id   event-resource-2-id
+                            :type :event-type-2})
+        event-resource-3-id (td/random-uuid)
+        event-resource-3 (tr/event-resource wiremock-url
+                           {:id   event-resource-3-id
+                            :type :event-type-3})
+        event-resource-4-id (td/random-uuid)
+        event-resource-4 (tr/event-resource wiremock-url
+                           {:id   event-resource-4-id
+                            :type :event-type-4})
+        event-resource-5-id (td/random-uuid)
+        event-resource-5 (tr/event-resource wiremock-url
+                           {:id   event-resource-5-id
+                            :type :event-type-5})
+        event-resource-6-id (td/random-uuid)
+        event-resource-6 (tr/event-resource wiremock-url
+                           {:id   event-resource-6-id
+                            :type :event-type-6})
+        event-resource-7-id (td/random-uuid)
+        event-resource-7 (tr/event-resource wiremock-url
+                           {:id   event-resource-7-id
+                            :type :event-type-7})]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server)
+       (ts/events-resource wiremock-server
+         :events-link {:parameters {:per-page events-per-page}}
+         :next-link
+         {:name       events-next-link-name
+          :parameters {:per-page events-per-page :since event-resource-3-id}}
+         :event-resources [event-resource-1 event-resource-2 event-resource-3])
+       (ts/events-resource wiremock-server
+         :events-link
+         {:parameters {:per-page events-per-page :since event-resource-3-id}}
+         :event-resources [event-resource-4 event-resource-5 event-resource-6])
+       (ts/events-resource wiremock-server
+         :events-link
+         {:parameters {:per-page events-per-page :since event-resource-4-id}}
+         :event-resources [event-resource-5 event-resource-6 event-resource-7])
+       (ts/events-resource wiremock-server
+         :events-link
+         {:parameters {:per-page events-per-page :since event-resource-7-id}}
+         :event-resources [])]
+      (tcn/with-connector kafka-connect
+        {:name :event-feed-source
+         :config
+         {:connector.class
+          tcn/connector-class
+          :topic.name
+          topic-name
+          :polling.max.events.per.poll
+          max-events-per-poll
+          :eventfeed.discovery.url
+          discovery-href
+          :eventfeed.events.per.page
+          events-per-page
+          :eventfeed.link.name.events.next
+          events-next-link-name}}
+        (let [messages (tc/consume-n kafka topic-name 7)
+              message-payloads (map #(get-in % [:value :payload]) messages)]
+          (is (= [(haljson/resource->map event-resource-1)
+                  (haljson/resource->map event-resource-2)
+                  (haljson/resource->map event-resource-3)
+                  (haljson/resource->map event-resource-4)
+                  (haljson/resource->map event-resource-5)
+                  (haljson/resource->map event-resource-6)
+                  (haljson/resource->map event-resource-7)]
                 message-payloads)))))))
