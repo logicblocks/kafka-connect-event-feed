@@ -94,12 +94,13 @@
       :documentation (str "The number of events to request in each request to "
                        "the event feed."))
     (define
-      :name "eventfeed.pagination"
-      :type :type/boolean
-      :default-value true
+      :name "eventfeed.query.parameter.name.per.page"
+      :type :type/string
+      :default-value "perPage"
       :importance :importance/medium
-      :documentation (str "Defines whether poll returns only one page or"
-                       "as far as it can go"))
+      :documentation (str "The name of the query parameter in the events "
+                       "template href that determines the number of events "
+                       "to fetch per page."))
     (define
       :name "events.fields.offset.jsonpath"
       :type :type/string
@@ -139,6 +140,9 @@
 
 (defn event-feed-events-per-page [config]
   (:eventfeed.events.per.page config))
+
+(defn event-feed-per-page-query-parameter-name [config]
+  (keyword (:eventfeed.query.parameter.name.per.page config)))
 
 (defn event-offset-field-jsonpath [config]
   (:events.fields.offset.jsonpath config))

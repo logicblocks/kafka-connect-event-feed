@@ -14,53 +14,67 @@
   (let [params (cske/transform-keys csk/->camelCaseString params)]
     (uritmpl/uritemplate uri-template params)))
 
-(defn events-path-template [] "/events{?since,pick}")
+(defn events-path-template
+  ([] (events-path-template {}))
+  ([{:keys [parameter-names]
+     :or   {parameter-names {}}}]
+   (let [{:keys [per-page since]
+          :or   {per-page :perPage
+                 since    :since}}
+         parameter-names]
+     (str "/events{?" (name per-page) "," (name since) "}"))))
 (defn event-path-template [] "/events/{eventId}")
 
 (defn discovery-path [] "/")
 
 (defn events-path
   ([] (events-path {}))
-  ([params]
-   (populate (events-path-template)
-     params)))
+  ([{:keys [parameters]
+     :or {parameters {}}
+     :as events-link}]
+   (populate (events-path-template events-link)
+     parameters)))
 
 (defn discovery-href [base-url]
   (str base-url (discovery-path)))
 
-(defn events-template-href [base-url]
-  (str base-url (events-path-template)))
+(defn events-template-href
+  ([base-url] (events-template-href base-url {}))
+  ([base-url options] (str base-url (events-path-template options))))
 
 (defn events-href
   ([base-url]
    (events-href base-url {}))
-  ([base-url params]
-   (populate (str base-url (events-path-template))
-     params)))
+  ([base-url {:keys [parameters parameter-names]}]
+   (populate (str base-url (events-path-template parameter-names))
+     parameters)))
 
 (defn event-href [base-url event-id]
   (populate (str base-url (event-path-template))
     {:event-id event-id}))
 
-(defn discovery-resource [base-url]
-  (-> (hal/new-resource (discovery-href base-url))
-    (hal/add-link :events
-      {:href      (events-template-href base-url)
-       :templated true})))
+(defn discovery-resource
+  ([base-url]
+   (discovery-resource base-url {}))
+  ([base-url {:keys [events-link]}]
+   (-> (hal/new-resource (discovery-href base-url))
+     (hal/add-link :events
+       {:href      (events-template-href base-url events-link)
+        :templated true}))))
 
 (defn events-resource
-  ([base-url & {:keys [events-link-parameters
-                       next-link-parameters
+  ([base-url & {:keys [events-link
+                       next-link
                        event-resources]}]
-   (-> (hal/new-resource (events-href base-url events-link-parameters))
+   (-> (hal/new-resource (events-href base-url events-link))
      (hal/add-href :discovery (discovery-href base-url))
      (hal/add-link :events
        (map (fn [event-resource]
               {:href (hal/get-href event-resource :self)})
          event-resources))
      (hal/add-link :next
-       (when (not (nil? next-link-parameters))
-         (events-href base-url next-link-parameters)))
+       (when (not (nil? next-link))
+         (events-href base-url next-link)))
      (hal/add-resource :events event-resources))))
 
 (defn event-resource

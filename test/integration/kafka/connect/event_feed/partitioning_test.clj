@@ -51,13 +51,13 @@
     (wmc/with-stubs
       [(ts/discovery-resource wiremock-server)
        (ts/events-resource wiremock-server
-         :events-link-parameters {:pick 5}
+         :events-link {:parameters {:per-page 5}}
          :event-resources [event-resource-1
                            event-resource-2
                            event-resource-3
                            event-resource-4])
        (ts/events-resource wiremock-server
-         :events-link-parameters {:pick 5 :since event-resource-4-id}
+         :events-link {:parameters {:per-page 5 :since event-resource-4-id}}
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name :event-feed-source
@@ -106,13 +106,13 @@
     (wmc/with-stubs
       [(ts/discovery-resource wiremock-server)
        (ts/events-resource wiremock-server
-         :events-link-parameters {:pick 5}
+         :events-link {:parameters {:per-page 5}}
          :event-resources [event-resource-1
                            event-resource-2
                            event-resource-3
                            event-resource-4])
        (ts/events-resource wiremock-server
-         :events-link-parameters {:pick 5 :since event-resource-4-id}
+         :events-link {:parameters {:per-page 5 :since event-resource-4-id}}
          :event-resources [])]
       (tcn/with-connector kafka-connect
         {:name :event-feed-source

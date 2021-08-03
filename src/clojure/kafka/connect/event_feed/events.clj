@@ -30,14 +30,19 @@
      [navigator resource events])))
 
 (defn load-new-events [config offset]
-  (let [discovery-url (efc/event-feed-discovery-url config)
-        events-per-page (efc/event-feed-events-per-page config)
-        maximum-events (efc/polling-maximum-events-per-poll config)]
+  (let [discovery-url
+        (efc/event-feed-discovery-url config)
+        events-per-page
+        (efc/event-feed-events-per-page config)
+        per-page-query-parameter-name
+        (efc/event-feed-per-page-query-parameter-name config)
+        maximum-events
+        (efc/polling-maximum-events-per-poll config)]
     (loop [all-events []
            navigator (halnav/discover discovery-url)
            link :events
            parameters
-           (cond-> {:pick events-per-page}
+           (cond-> {per-page-query-parameter-name events-per-page}
              (not (nil? offset)) (assoc :since offset))]
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)

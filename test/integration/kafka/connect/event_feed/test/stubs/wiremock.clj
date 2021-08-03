@@ -6,24 +6,27 @@
 
    [kafka.connect.event-feed.test.resources :as tr]))
 
-(defn discovery-resource [wiremock-server]
-  (let [wiremock-url (wmu/base-url wiremock-server)]
-    {:server wiremock-server
-     :req    [:GET (tr/discovery-path)]
-     :res    [200 {:body
-                   (haljson/resource->json
-                     (tr/discovery-resource wiremock-url))}]}))
+(defn discovery-resource
+  ([wiremock-server]
+   (discovery-resource wiremock-server {}))
+  ([wiremock-server options]
+   (let [wiremock-url (wmu/base-url wiremock-server)]
+     {:server wiremock-server
+      :req    [:GET (tr/discovery-path)]
+      :res    [200 {:body
+                    (haljson/resource->json
+                      (tr/discovery-resource wiremock-url options))}]})))
 
 (defn events-resource
-  [wiremock-server & {:keys [events-link-parameters
-                             next-link-parameters
+  [wiremock-server & {:keys [events-link
+                             next-link
                              event-resources]}]
   (let [wiremock-url (wmu/base-url wiremock-server)]
     {:server wiremock-server
-     :req    [:GET (tr/events-path events-link-parameters)]
+     :req    [:GET (tr/events-path events-link)]
      :res    [200 {:body
                    (haljson/resource->json
                      (tr/events-resource wiremock-url
-                       :events-link-parameters events-link-parameters
-                       :next-link-parameters next-link-parameters
+                       :events-link events-link
+                       :next-link next-link
                        :event-resources event-resources))}]}))
