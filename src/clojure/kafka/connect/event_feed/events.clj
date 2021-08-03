@@ -36,6 +36,8 @@
         (efc/event-feed-events-per-page config)
         per-page-query-parameter-name
         (efc/event-feed-per-page-query-parameter-name config)
+        since-query-parameter-name
+        (efc/event-feed-since-query-parameter-name config)
         maximum-events
         (efc/polling-maximum-events-per-poll config)]
     (loop [all-events []
@@ -43,7 +45,7 @@
            link :events
            parameters
            (cond-> {per-page-query-parameter-name events-per-page}
-             (not (nil? offset)) (assoc :since offset))]
+             (not (nil? offset)) (assoc since-query-parameter-name offset))]
       (let [[navigator resource events] (load-page-of-events
                                           navigator link parameters)
             all-events (into all-events events)]

@@ -102,6 +102,14 @@
                        "template href that determines the number of events "
                        "to fetch per page."))
     (define
+      :name "eventfeed.query.parameter.name.since"
+      :type :type/string
+      :default-value "since"
+      :importance :importance/medium
+      :documentation (str "The name of the query parameter in the events "
+                       "template href that determines the identifier of the "
+                       "last event that was seen."))
+    (define
       :name "events.fields.offset.jsonpath"
       :type :type/string
       :default-value "$.id"
@@ -143,6 +151,9 @@
 
 (defn event-feed-per-page-query-parameter-name [config]
   (keyword (:eventfeed.query.parameter.name.per.page config)))
+
+(defn event-feed-since-query-parameter-name [config]
+  (keyword (:eventfeed.query.parameter.name.since config)))
 
 (defn event-offset-field-jsonpath [config]
   (:events.fields.offset.jsonpath config))

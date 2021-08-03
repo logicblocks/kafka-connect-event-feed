@@ -5,7 +5,7 @@ Tasks
 -----
 
 * Make link names configurable
-* Make parameter names configurable
+* Make property names configurable
 * Use version number from pipeline
 * Allow event offset to be reset?
 * Handle dead letters?

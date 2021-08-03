@@ -31,8 +31,8 @@
   ([] (events-path {}))
   ([{:keys [parameters]
      :or {parameters {}}
-     :as events-link}]
-   (populate (events-path-template events-link)
+     :as options}]
+   (populate (events-path-template options)
      parameters)))
 
 (defn discovery-href [base-url]
@@ -45,9 +45,10 @@
 (defn events-href
   ([base-url]
    (events-href base-url {}))
-  ([base-url {:keys [parameters parameter-names]}]
-   (populate (str base-url (events-path-template parameter-names))
-     parameters)))
+  ([base-url {:keys [parameters] :as options}]
+   (let [template-path (events-path-template options)]
+     (populate (str base-url template-path)
+       parameters))))
 
 (defn event-href [base-url event-id]
   (populate (str base-url (event-path-template))
