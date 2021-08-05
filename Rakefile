@@ -111,6 +111,8 @@ namespace :pipeline do
 end
 
 namespace :library do
+  RakeLeiningen.define_build_task
+
   RakeLeiningen.define_check_tasks(fix: true)
 
   namespace :test do
