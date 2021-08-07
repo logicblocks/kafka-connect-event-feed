@@ -4,7 +4,8 @@
 
    [kafka.connect.event-feed.task]
    [kafka.connect.event-feed.logging]
-   [kafka.connect.event-feed.config :as efc])
+   [kafka.connect.event-feed.config :as efc]
+   [kafka.connect.event-feed.version :as efv])
   (:import
    [io.logicblocks.kafka.connect.eventfeed
     EventFeedSourceTask]))
@@ -31,7 +32,7 @@
   (efc/configuration-definition))
 
 (defn version [_]
-  "0.0.1")
+  (efv/version))
 
 (defn task-class [_]
   EventFeedSourceTask)

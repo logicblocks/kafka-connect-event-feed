@@ -5,6 +5,7 @@
    [kafka.connect.event-feed.logging]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.config :as efc]
+   [kafka.connect.event-feed.version :as efv]
    [kafka.connect.event-feed.events :as efe]))
 
 (def default-partition {:partition "default"})
@@ -139,4 +140,4 @@
     (pr-str metadata)))
 
 (defn version [_]
-  "0.0.1")
+  (efv/version))
