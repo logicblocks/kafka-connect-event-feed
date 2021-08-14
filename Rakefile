@@ -136,8 +136,29 @@ namespace :library do
   end
 
   namespace :version do
+    desc 'Bump the version for the specified type, one of ' +
+           ':major, :minor, :patch or :pre.'
     task :bump, [:type] do |_, args|
+      version = version.bump(args.type)
+      puts("Bumping #{args.type} part of library version. " +
+             "New version is: #{version}.")
+      write_version(version)
+    end
 
+    desc 'Bump the version for a prerelease.'
+    task :prerelease do
+      version = version.prerelease
+      puts("Bumping library version for prerelease. " +
+             "New version is: #{version}.")
+      write_version(version)
+    end
+
+    desc 'Bump the version for a release.'
+    task :release do
+      version = version.release
+      puts("Bumping library version for release. " +
+             "New version is: #{version}.")
+      write_version(version)
     end
   end
 
@@ -172,4 +193,14 @@ namespace :library do
       ]
     end
   end
+end
+
+def write_version(version)
+  sh(
+    "lein ver write" +
+      " :major #{version.major}" +
+      " :minor #{version.minor}" +
+      " :patch #{version.patch}" +
+      (version.pre ? " :pre-release #{version.pre}" : "")
+  )
 end
