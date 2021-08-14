@@ -1,9 +1,12 @@
 source 'https://rubygems.org'
 
+gem 'edn', '~> 1.1'
+gem 'mime-types', '~> 3.3'
 gem 'rake', '~> 13.0'
 gem 'rake_circle_ci', '~> 0.9'
-gem 'rake_github', '~> 0.5'
+gem 'rake_github', '0.8.0.pre.5'
 gem 'rake_gpg', '~> 0.16'
 gem 'rake_ssh', '~> 0.4'
 gem 'rake_leiningen', '~> 0.20'
 gem 'rake_docker', '~> 2.13'
+gem 'semantic', '~> 1.6'

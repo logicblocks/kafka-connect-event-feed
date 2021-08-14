@@ -6,6 +6,10 @@ require 'rake_leiningen'
 require 'rake_ssh'
 require 'yaml'
 
+require_relative 'lib/version'
+
+version = Version.from_file('resources/VERSION')
+
 task :default => [:'library:check', :'library:test:all']
 
 RakeLeiningen.define_installation_tasks(
@@ -131,15 +135,41 @@ namespace :library do
     task all: %w[unit integration]
   end
 
-  namespace :publish do
-    RakeLeiningen.define_release_task(
-      name: :prerelease,
-      profile: 'prerelease'
-    )
+  namespace :version do
+    task :bump, [:type] do |_, args|
 
-    RakeLeiningen.define_release_task(
+    end
+  end
+
+  namespace :publish do
+    RakeGithub.define_release_task(
+      name: :prerelease,
+      repository: 'logicblocks/kafka.connect.event-feed'
+    ) do |t|
+      github_config =
+        YAML.load_file('config/secrets/github/config.yaml')
+
+      t.access_token = github_config['github_personal_access_token']
+      t.tag_name = version.to_s
+      t.prerelease = true
+      t.assets = [
+        "target/uberjar/kafka.connect.event-feed-#{version}-standalone.jar"
+      ]
+    end
+
+    RakeGithub.define_release_task(
       name: :release,
-      profile: 'release'
-    )
+      repository: 'logicblocks/kafka.connect.event-feed'
+    ) do |t|
+      github_config =
+        YAML.load_file('config/secrets/github/config.yaml')
+
+      t.access_token = github_config['github_personal_access_token']
+      t.tag_name = version.to_s
+      t.prerelease = false
+      t.assets = [
+        "target/uberjar/kafka.connect.event-feed-#{version}-standalone.jar"
+      ]
+    end
   end
 end
