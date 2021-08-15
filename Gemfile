@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'edn', '~> 1.1'
+gem 'git', '~> 1.9'
 gem 'mime-types', '~> 3.3'
 gem 'rake', '~> 13.0'
 gem 'rake_circle_ci', '~> 0.9'

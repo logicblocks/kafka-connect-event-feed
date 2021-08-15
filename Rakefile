@@ -172,6 +172,8 @@ namespace :library do
 
       t.access_token = github_config['github_personal_access_token']
       t.tag_name = version.to_s
+      t.target_commitish = git_sha
+      t.release_name = version.to_s
       t.prerelease = true
       t.assets = [
         "target/uberjar/kafka.connect.event-feed-#{version}-standalone.jar"
@@ -187,12 +189,18 @@ namespace :library do
 
       t.access_token = github_config['github_personal_access_token']
       t.tag_name = version.to_s
+      t.target_commitish = git_sha
+      t.release_name = version.to_s
       t.prerelease = false
       t.assets = [
         "target/uberjar/kafka.connect.event-feed-#{version}-standalone.jar"
       ]
     end
   end
+end
+
+def git_sha
+  Git.open('.').object('HEAD').sha
 end
 
 def write_version(version)

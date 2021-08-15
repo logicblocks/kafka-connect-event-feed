@@ -47,6 +47,8 @@ GEM
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
+    git (1.9.1)
+      rchardet (~> 1.8)
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
     i18n (1.8.10)
@@ -103,6 +105,7 @@ GEM
       colored2 (~> 3.1)
       rake_factory (~> 0.23)
       sshkey (~> 2.0)
+    rchardet (1.8.0)
     ruby2_keywords (0.0.5)
     ruby_gpg2 (0.8.0)
       lino (>= 1.5)
@@ -126,6 +129,7 @@ PLATFORMS
 
 DEPENDENCIES
   edn (~> 1.1)
+  git (~> 1.9)
   mime-types (~> 3.3)
   rake (~> 13.0)
   rake_circle_ci (~> 0.9)
