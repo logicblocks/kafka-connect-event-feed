@@ -151,6 +151,7 @@ namespace :library do
       puts("Bumping library version for prerelease. " +
              "New version is: #{version}.")
       write_version(version)
+      commit_and_push("Bump version to #{version} [ci skip]")
     end
 
     desc 'Bump the version for a release.'
@@ -159,6 +160,7 @@ namespace :library do
       puts("Bumping library version for release. " +
              "New version is: #{version}.")
       write_version(version)
+      commit_and_push("Bump version to #{version} [ci skip]")
     end
   end
 
@@ -199,8 +201,12 @@ namespace :library do
   end
 end
 
+def repo
+  Git.open(Pathname.new('.'))
+end
+
 def git_sha
-  Git.open('.').object('HEAD').sha
+  repo.object('HEAD').sha
 end
 
 def write_version(version)
@@ -211,4 +217,10 @@ def write_version(version)
       " :patch #{version.patch}" +
       (version.pre ? " :pre-release #{version.pre}" : "")
   )
+end
+
+def commit_and_push(message)
+  repo.add
+  repo.commit(message)
+  repo.push('origin', 'main')
 end
