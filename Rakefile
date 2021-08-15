@@ -138,15 +138,16 @@ namespace :library do
   namespace :version do
     desc 'Bump the version for the specified type, one of ' +
            ':major, :minor, :patch or :pre.'
-    task :bump, [:type] do |_, args|
+    task :bump, [:type] => [:'leiningen:ensure'] do |_, args|
       version = version.bump(args.type)
       puts("Bumping #{args.type} part of library version. " +
              "New version is: #{version}.")
       write_version(version)
+      commit_and_push("Bump version to #{version} [ci skip]")
     end
 
     desc 'Bump the version for a prerelease.'
-    task :prerelease do
+    task :prerelease => [:'leiningen:ensure'] do
       version = version.prerelease
       puts("Bumping library version for prerelease. " +
              "New version is: #{version}.")
@@ -155,7 +156,7 @@ namespace :library do
     end
 
     desc 'Bump the version for a release.'
-    task :release do
+    task :release => [:'leiningen:ensure'] do
       version = version.release
       puts("Bumping library version for release. " +
              "New version is: #{version}.")
@@ -210,7 +211,6 @@ def git_sha
 end
 
 def write_version(version)
-  sh('lein deps')
   sh('lein ver write' +
        " :major #{version.major}" +
        " :minor #{version.minor}" +
