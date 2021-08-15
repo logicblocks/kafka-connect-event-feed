@@ -66,8 +66,8 @@ namespace :secrets do
 end
 
 RakeCircleCI.define_project_tasks(
-    namespace: :circle_ci,
-    project_slug: 'github/logicblocks/kafka.connect.event-feed'
+  namespace: :circle_ci,
+  project_slug: 'github/logicblocks/kafka.connect.event-feed'
 ) do |t|
   circle_ci_config =
     YAML.load_file('config/secrets/circle_ci/config.yaml')
@@ -75,8 +75,8 @@ RakeCircleCI.define_project_tasks(
   t.api_token = circle_ci_config['circle_ci_api_token']
   t.environment_variables = {
     ENCRYPTION_PASSPHRASE:
-        File.read('config/secrets/ci/encryption.passphrase')
-            .chomp
+      File.read('config/secrets/ci/encryption.passphrase')
+      .chomp
   }
   t.checkout_keys = []
   t.ssh_keys = [
@@ -210,12 +210,12 @@ def git_sha
 end
 
 def write_version(version)
-  sh(
-    "lein ver write" +
-      " :major #{version.major}" +
-      " :minor #{version.minor}" +
-      " :patch #{version.patch}" +
-      (version.pre ? " :pre-release #{version.pre}" : "")
+  sh('lein deps')
+  sh('lein ver write' +
+       " :major #{version.major}" +
+       " :minor #{version.minor}" +
+       " :patch #{version.patch}" +
+       (version.pre ? " :pre-release #{version.pre}" : "")
   )
 end
 
