@@ -211,7 +211,7 @@ def git_sha
 end
 
 def write_version(version)
-  sh('lein ver write' +
+  sh('vendor/leiningen/bin/lein ver write' +
        " :major #{version.major}" +
        " :minor #{version.minor}" +
        " :patch #{version.patch}" +
