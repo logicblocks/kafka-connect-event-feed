@@ -14,4 +14,5 @@ git crypt unlock
 git pull
 
 ./go library:version:release
+./go library:build
 ./go library:publish:release

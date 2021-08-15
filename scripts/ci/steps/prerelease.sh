@@ -12,4 +12,5 @@ cd "$PROJECT_DIR"
 git crypt unlock
 
 ./go library:version:prerelease
+./go library:build
 ./go library:publish:prerelease
