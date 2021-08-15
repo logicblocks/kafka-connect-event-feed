@@ -1,3 +1,4 @@
+require 'git'
 require 'rake_circle_ci'
 require 'rake_docker'
 require 'rake_github'
