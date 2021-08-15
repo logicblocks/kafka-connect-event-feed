@@ -2,6 +2,6 @@
  :major 0
  :minor 0
  :patch 1
- :pre-release "RC6"
+ :pre-release "RC7"
  :build nil
 }
