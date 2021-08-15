@@ -32,7 +32,7 @@
   (efc/configuration-definition))
 
 (defn version [_]
-  (efv/string))
+  efv/string)
 
 (defn task-class [_]
   EventFeedSourceTask)

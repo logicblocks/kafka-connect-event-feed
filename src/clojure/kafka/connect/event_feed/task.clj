@@ -140,4 +140,4 @@
     (pr-str metadata)))
 
 (defn version [_]
-  (efv/string))
+  efv/string)
