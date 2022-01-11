@@ -47,8 +47,9 @@
 (defn- define
   [^ConfigDef config-def
    & {:keys [name type default-value importance documentation]
-      :or   {default-value nil}}]
-  (if default-value
+      :or   {default-value nil}
+      :as   config}]
+  (if (contains? config :default-value)
     (.define config-def name
       (configuration-type type)
       default-value
