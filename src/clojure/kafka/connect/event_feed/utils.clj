@@ -35,7 +35,7 @@
     (LinkedList. (map clojure-data->java-data x))
 
     (number? x)
-    (Integer/parseInt (str x))
+    (Long/parseLong (str x))
 
     :else x))
 
