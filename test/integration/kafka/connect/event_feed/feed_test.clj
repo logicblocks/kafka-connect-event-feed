@@ -84,6 +84,40 @@
           (is (= (haljson/resource->map event-resource)
                 message-payload)))))))
 
+(deftest fetches-single-event-from-one-event-feed-page-with-vector
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events
+        event-resource-id (td/random-event-id)
+        payload  {:vector [{:string-example       "50.0"}]}
+        event-resource (tr/event-resource wiremock-url
+                                          {:id   event-resource-id
+                                           :type :event-type
+                                           :payload payload})]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server)
+       (ts/events-resource wiremock-server
+                           :events-link {:parameters {:per-page 2}}
+                           :events {:resources [event-resource]})
+       (ts/events-resource wiremock-server
+                           :events-link {:parameters {:per-page 2 :since event-resource-id}}
+                           :events {:resources []})]
+      (tcn/with-connector kafka-connect
+                          {:name   :event-feed-source
+                           :config {:connector.class           tcn/connector-class
+                                    :topic.name                topic-name
+                                    :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                                    :eventfeed.events.per.page 2}}
+                          (let [messages (tc/consume-n kafka topic-name 1)
+                                message (first messages)
+                                message-payload (get-in message [:value :payload])]
+                            (is (= (haljson/resource->map
+                                     event-resource)
+                                   message-payload)))))))
+
 (deftest fetches-multiple-events-from-one-event-feed-page
   (let [kafka (ktc/kafka @kafka-atom)
         kafka-connect (ktc/kafka-connect @kafka-atom)

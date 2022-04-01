@@ -21,7 +21,7 @@
                      (clojure-data->java-data v))))
                (HashMap.)
                (seq x))
-    (list? x) (ArrayList. ^Collection (map clojure-data->java-data x))
+    (or (list? x) (vector? x)) (ArrayList. ^Collection (map clojure-data->java-data x))
     (set? x) (HashSet. ^Collection (map clojure-data->java-data x))
     (seq? x) (LinkedList. (map clojure-data->java-data x))
     (number? x) (Integer/parseInt (str x))
