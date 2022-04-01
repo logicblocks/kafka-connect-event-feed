@@ -124,6 +124,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  arm64-darwin-21
   x86_64-darwin-19
   x86_64-linux
 
@@ -141,4 +142,4 @@ DEPENDENCIES
   semantic (~> 1.6)
 
 BUNDLED WITH
-   2.2.20
+   2.3.10
