@@ -9,7 +9,7 @@
     Configuration
     KafkaConnectClient]
    [org.sourcelab.kafka.connect.apiclient.request.dto
-    NewConnectorDefinition]))
+    NewConnectorDefinition Task Task$TaskId]))
 
 (defn clojure-value->property-value [x]
   (cond
@@ -36,8 +36,36 @@
 (defn connector [^KafkaConnectClient client connector-name]
   (.getConnector client connector-name))
 
+(defn connector-tasks
+  [^KafkaConnectClient client connector-name]
+  (.getConnectorTasks client (name connector-name)))
+
+(defn restart-connector-task
+  [^KafkaConnectClient client connector-name task]
+  (.restartConnectorTask
+    client
+    (name connector-name)
+    (-> task (.getId) (.getTask))))
+
+(defn restart-connector-tasks
+  [^KafkaConnectClient client connector-name]
+  (let [tasks (connector-tasks client connector-name)]
+    (doseq [^Task task tasks]
+          (restart-connector-task client connector-name task))))
+
 (defn add-connector [^KafkaConnectClient client connector-name config]
   (.addConnector client
     (NewConnectorDefinition.
       (name connector-name)
       (clojure-map->property-map config))))
+
+(defn delete-connector [^KafkaConnectClient client connector-name]
+  (.deleteConnector client (name connector-name)))
+
+(defn restart-connector
+  ([^KafkaConnectClient client connector-name]
+   (restart-connector client connector-name {}))
+  ([^KafkaConnectClient client connector-name opts]
+   (.restartConnector client (name connector-name))
+   (when (get opts :include-tasks?)
+     (restart-connector-tasks client connector-name))))

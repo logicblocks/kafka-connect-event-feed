@@ -7,6 +7,7 @@ import clojure.lang.IFn;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
+import org.apache.kafka.connect.source.SourceTaskContext;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,13 @@ public class EventFeedSourceTask extends SourceTask {
         super();
         IFn atom = Clojure.var(CLOJURE_CORE_NS, "atom");
         state = (Atom) atom.invoke(null);
+    }
+
+    @Override
+    public void initialize(SourceTaskContext context) {
+        super.initialize(context);
+        IFn start = Clojure.var(TASK_NS, "initialize");
+        start.invoke(state, context);
     }
 
     @Override

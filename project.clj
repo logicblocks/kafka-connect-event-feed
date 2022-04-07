@@ -80,7 +80,7 @@
 
               [fundingcircle/jackdaw "0.8.0"
                :exclusions [org.apache.kafka/kafka-clients]]
-              [org.sourcelab/kafka-connect-client "3.1.1"]]
+              [org.sourcelab/kafka-connect-client "4.0.0"]]
 
              :test-paths
              ^:replace ["test/shared"
