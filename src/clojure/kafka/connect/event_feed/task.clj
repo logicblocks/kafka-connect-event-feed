@@ -67,7 +67,7 @@
 (defn wait-interval [state-atom]
   (let [config (config state-atom)
         interval-ms (efc/polling-fetch-interval-milliseconds config)]
-    (log/infof
+    (log/debugf
       (str "EventFeedSourceTask[name: %s] waiting %s ms before looking for "
         "new events...")
       (efc/connector-name config)
@@ -77,7 +77,7 @@
 (defn fetch-events [state-atom]
   (let [config (config state-atom)
         offset (offset state-atom)]
-    (log/infof
+    (log/debugf
       (str "EventFeedSourceTask[name: %s] looking for new events: "
         "[url: %s, per-page: %s, offset: %s]")
       (efc/connector-name config)
@@ -89,7 +89,7 @@
           new-offset (efe/event->offset config (last events))]
       (if (empty? events)
         (do
-          (log/infof "EventFeedSourceTask[name: %s] found no new events."
+          (log/debugf "EventFeedSourceTask[name: %s] found no new events."
             (efc/connector-name config))
           [[] nil])
         (do
