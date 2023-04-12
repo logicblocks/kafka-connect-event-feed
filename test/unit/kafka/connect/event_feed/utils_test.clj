@@ -6,6 +6,6 @@
 
 (deftest utils-parses-numbers-as-longs
   (is (= 100
-         (clojure-data->java-data 100)))
+        (clojure-data->java-data 100)))
   (is (= (+ 1 Integer/MAX_VALUE)
-         (clojure-data->java-data (+ 1 Integer/MAX_VALUE)))))
+        (clojure-data->java-data (+ 1 Integer/MAX_VALUE)))))

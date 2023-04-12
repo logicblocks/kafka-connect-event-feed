@@ -51,7 +51,7 @@
   [^KafkaConnectClient client connector-name]
   (let [tasks (connector-tasks client connector-name)]
     (doseq [^Task task tasks]
-          (restart-connector-task client connector-name task))))
+      (restart-connector-task client connector-name task))))
 
 (defn add-connector [^KafkaConnectClient client connector-name config]
   (.addConnector client
