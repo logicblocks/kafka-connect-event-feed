@@ -20,6 +20,7 @@
 
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.logging "1.1.0"]
+                 [org.clojure/core.cache "1.0.225"]
 
                  [halboy "6.0.0"]
                  [json-path "2.1.0"]]
@@ -27,7 +28,7 @@
   :profiles
   {:provided
    {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
-   
+
    :shared
    [:provided {:dependencies
                [[org.clojure/test.check "1.1.0"]

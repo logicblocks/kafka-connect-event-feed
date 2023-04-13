@@ -1,8 +1,9 @@
 (ns kafka.connect.event-feed.events
   (:require
+   [clojure.core.cache :as cache]
+   [halboy.json :as haljson]
    [halboy.navigator :as halnav]
    [halboy.resource :as hal]
-   [halboy.json :as haljson]
 
    [json-path :as jp]
 
@@ -29,7 +30,16 @@
                  (efc/event-feed-events-embedded-resource-name config))]
     [navigator resource events]))
 
-(defn load-new-events [config offset]
+(defn discover
+  [cache url]
+  (if (cache/has? @cache url)
+    (get (cache/hit @cache url) url)
+    (let [navigator (halnav/discover url)]
+      (when (= 200 (halnav/status navigator))
+        (swap! cache #(cache/miss % url navigator)))
+      navigator)))
+
+(defn load-new-events [cache config offset]
   (let [discovery-url
         (efc/event-feed-discovery-url config)
         events-per-page
@@ -45,7 +55,7 @@
         maximum-events
         (efc/polling-maximum-events-per-poll config)]
     (loop [all-events []
-           navigator (halnav/discover discovery-url)
+           navigator (discover cache discovery-url)
            link discovery-events-link-name
            parameters
            (cond-> {per-page-template-parameter-name events-per-page}

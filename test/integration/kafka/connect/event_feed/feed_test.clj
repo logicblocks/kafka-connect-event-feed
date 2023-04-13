@@ -660,3 +660,62 @@
                   (haljson/resource->map event-resource-2)
                   (haljson/resource->map event-resource-3)]
                 message-payloads)))))))
+
+(deftest caches-discovery
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events]
+    (wmc/with-stubs
+      [(ts/discovery-resource wiremock-server)
+       (ts/events-resource wiremock-server
+         :events-link {:parameters {:per-page 5}}
+         :events {:resources []})]
+      (tcn/with-connector kafka-connect
+        {:name   :event-feed-source
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 5}}
+        (let [messages
+              (tc/consume-if kafka topic-name
+                (fn []
+                  (let [event-feed-gets
+                        (wmc/get-logged-requests
+                          :GET (tr/events-path {:parameters {:per-page 5}})
+                          wiremock-server)]
+                    (>= (count event-feed-gets) 10))))]
+          (is (= 1 (count (wmc/get-logged-requests :GET "/" wiremock-server))))
+          (is (= 0 (count messages))))))))
+
+(deftest does-not-cache-failed-discovery
+  (let [kafka (ktc/kafka @kafka-atom)
+        kafka-connect (ktc/kafka-connect @kafka-atom)
+        wiremock-server @wiremock-atom
+        wiremock-url (wmu/base-url wiremock-server)
+
+        topic-name :events]
+    (wmc/with-stubs
+      [(ts/discovery-internal-server-error wiremock-server {:new "1"})
+       (ts/discovery-resource wiremock-server {} {:required "1"})
+       (ts/events-resource wiremock-server
+         :events-link {:parameters {:per-page 5}}
+         :events {:resources []})]
+      (tcn/with-connector kafka-connect
+        {:name   :event-feed-source
+         :config {:connector.class           tcn/connector-class
+                  :topic.name                topic-name
+                  :eventfeed.discovery.url   (tr/discovery-href wiremock-url)
+                  :eventfeed.events.per.page 5}}
+        (let [messages
+              (tc/consume-if kafka topic-name
+                (fn []
+                  (let [event-feed-gets
+                        (wmc/get-logged-requests
+                          :GET (tr/events-path {:parameters {:per-page 5}})
+                          wiremock-server)]
+                    (>= (count event-feed-gets) 10))))]
+          (is (= 2 (count (wmc/get-logged-requests :GET "/" wiremock-server))))
+          (is (= 0 (count messages))))))))

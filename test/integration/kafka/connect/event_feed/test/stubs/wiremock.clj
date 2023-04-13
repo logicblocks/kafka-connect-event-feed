@@ -10,12 +10,22 @@
   ([wiremock-server]
    (discovery-resource wiremock-server {}))
   ([wiremock-server options]
+   (discovery-resource wiremock-server options {}))
+  ([wiremock-server options state]
    (let [wiremock-url (wmu/base-url wiremock-server)]
      {:server wiremock-server
       :req    [:GET (tr/discovery-path)]
       :res    [200 {:body
                     (haljson/resource->json
-                      (tr/discovery-resource wiremock-url options))}]})))
+                      (tr/discovery-resource wiremock-url options))}]
+      :state state})))
+
+(defn discovery-internal-server-error
+  [wiremock-server state]
+  {:server wiremock-server
+   :req    [:GET (tr/discovery-path)]
+   :res    [500]
+   :state  state})
 
 (defn events-resource
   [wiremock-server & {:keys [events-link
