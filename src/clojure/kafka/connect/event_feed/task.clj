@@ -1,5 +1,6 @@
 (ns kafka.connect.event-feed.task
   (:require
+   [clojure.core.cache :as cache]
    [clojure.tools.logging :as log]
 
    [kafka.connect.event-feed.logging]
@@ -33,6 +34,9 @@
 (defn records-committed [state-atom]
   (:records-committed (state state-atom)))
 
+(def five-minutes-in-ms (* 5 60 1000))
+(defn cache [state-atom] (:cache @state-atom))
+
 (defn initialize [state-atom context]
   (let [offset-map (context-offset-map context)
         offset (:offset offset-map)]
@@ -51,7 +55,8 @@
       (efc/connector-name config))
     (update-state state-atom assoc
       :config config
-      :records-committed 0)))
+      :records-committed 0
+      :cache (atom (cache/ttl-cache-factory {} :ttl five-minutes-in-ms)))))
 
 (defn stop [state-atom]
   (log/infof "EventFeedSourceTask[name: %s] stopping..."
@@ -76,7 +81,8 @@
 
 (defn fetch-events [state-atom]
   (let [config (config state-atom)
-        offset (offset state-atom)]
+        offset (offset state-atom)
+        cache (cache state-atom)]
     (log/debugf
       (str "EventFeedSourceTask[name: %s] looking for new events: "
         "[url: %s, per-page: %s, offset: %s]")
@@ -84,7 +90,7 @@
       (efc/event-feed-discovery-url config)
       (efc/event-feed-events-per-page config)
       offset)
-    (let [events (efe/load-new-events config offset)
+    (let [events (efe/load-new-events cache config offset)
           records (efe/events->source-records config events default-partition)
           new-offset (efe/event->offset config (last events))]
       (if (empty? events)
