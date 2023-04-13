@@ -21,7 +21,7 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.logging "1.1.0"]
 
-                 [halboy "5.1.1"]
+                 [halboy "6.0.0"]
                  [json-path "2.1.0"]]
 
   :profiles
@@ -40,7 +40,7 @@
                 [nrepl "0.8.3"]
                 [eftest "0.5.9"]
 
-                [halboy "5.1.1"
+                [halboy "6.0.0"
                  :exclusions [cheshire
                               org.clojure/core.cache]]
 
