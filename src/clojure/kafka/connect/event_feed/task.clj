@@ -64,7 +64,7 @@
   (update-state state-atom assoc :config nil))
 
 (defn report-commit-count [state-atom]
-  (log/infof
+  (log/debugf
     "EventFeedSourceTask[name: %s] committed %s records to topic since start."
     (efc/connector-name (config state-atom))
     (records-committed state-atom)))
@@ -99,7 +99,7 @@
             (efc/connector-name config))
           [[] nil])
         (do
-          (log/infof "EventFeedSourceTask[name: %s] found %s new events."
+          (log/debugf "EventFeedSourceTask[name: %s] found %s new events."
             (efc/connector-name config)
             (count events))
           (log/debugf "EventFeedSourceTask[name: %s] new events are: %s"
@@ -131,7 +131,7 @@
         (Throwable->map t)))))
 
 (defn commit [state-atom]
-  (log/infof
+  (log/debugf
     "EventFeedSourceTask[name: %s] committed records up to offset: %s"
     (efc/connector-name (config state-atom))
     (offset state-atom)))
