@@ -4,6 +4,10 @@ require:
 AllCops:
   NewCops: enable
 
+Metrics/BlockLength:
+  Exclude:
+    - Rakefile
+
 Layout/LineLength:
   Max: 80
 

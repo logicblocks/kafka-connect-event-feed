@@ -206,30 +206,30 @@ namespace :library do
   end
 
   namespace :version do
-    desc 'Bump the version for the specified type, one of ' +
-           ':major, :minor, :patch or :pre.'
+    desc 'Bump the version for the specified type, one of ' \
+         ':major, :minor, :patch or :pre.'
     task :bump, [:type] => [:'leiningen:ensure'] do |_, args|
       version = version.bump(args.type)
-      puts("Bumping #{args.type} part of library version. " +
-             "New version is: #{version}.")
+      puts("Bumping #{args.type} part of library version. " \
+           "New version is: #{version}.")
       write_version(version)
       commit_and_push("Bump version to #{version} [ci skip]")
     end
 
     desc 'Bump the version for a prerelease.'
-    task :prerelease => [:'leiningen:ensure'] do
+    task prerelease: [:'leiningen:ensure'] do
       version = version.prerelease
-      puts("Bumping library version for prerelease. " +
-             "New version is: #{version}.")
+      puts('Bumping library version for prerelease. ' \
+           "New version is: #{version}.")
       write_version(version)
       commit_and_push("Bump version to #{version} [ci skip]")
     end
 
     desc 'Bump the version for a release.'
-    task :release => [:'leiningen:ensure'] do
+    task release: [:'leiningen:ensure'] do
       version = version.release
-      puts("Bumping library version for release. " +
-             "New version is: #{version}.")
+      puts('Bumping library version for release. ' \
+           "New version is: #{version}.")
       write_version(version)
       commit_and_push("Bump version to #{version} [ci skip]")
     end
@@ -281,12 +281,11 @@ def git_sha
 end
 
 def write_version(version)
-  sh('vendor/leiningen/bin/lein ver write' +
-       " :major #{version.major}" +
-       " :minor #{version.minor}" +
-       " :patch #{version.patch}" +
-       (version.pre ? " :pre-release #{version.pre}" : "")
-  )
+  sh('vendor/leiningen/bin/lein ver write ' \
+     ":major #{version.major} " \
+     ":minor #{version.minor} " \
+     ":patch #{version.patch}" +
+       (version.pre ? " :pre-release #{version.pre}" : ''))
 end
 
 def commit_and_push(message)

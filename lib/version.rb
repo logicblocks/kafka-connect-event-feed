@@ -1,16 +1,17 @@
+# frozen_string_literal: true
+
 require 'edn'
 require 'semantic'
 
+# rubocop:disable Metrics/ClassLength
 class Version
+  # rubocop:disable Metrics/MethodLength
   def self.from_file(path, options = {})
-    parts =
-      File.exist?(path) ?
-        File.open(path) { |file| EDN.read(file) } :
-        {
-          major: 0,
-          minor: 0,
-          patch: 0
-        }
+    parts = if File.exist?(path)
+              File.open(path) { |file| EDN.read(file) }
+            else
+              { major: 0, minor: 0, patch: 0 }
+            end
 
     major = parts[:major]
     minor = parts[:minor]
@@ -18,12 +19,13 @@ class Version
     pre_release = parts[:'pre-release']
     build = parts[:build]
 
-    string = major.to_s + '.' + minor.to_s + '.' + patch.to_s +
-      (pre_release ? "-#{pre_release}" : '') +
-      (build ? "+#{build}" : '')
+    build_part = (build ? "+#{build}" : '').to_s
+    pre_release_part = (pre_release ? "-#{pre_release}" : '').to_s
+    string = "#{major}.#{minor}.#{patch}#{pre_release_part}#{build_part}"
 
     Version.new(string, options)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def initialize(version_string, options = {})
     @version = Semantic::Version.new(version_string)
@@ -86,11 +88,11 @@ class Version
   end
 
   def pre_descriptor
-    read_option([:pre, :descriptor], 'RC')
+    read_option(%i[pre descriptor], 'RC')
   end
 
   def pre_separator
-    read_option([:pre, :descriptor], '')
+    read_option(%i[pre descriptor], '')
   end
 
   def pre_prefix
@@ -98,17 +100,17 @@ class Version
   end
 
   def pre_numeric?
-    read_option([:pre, :number?], true)
+    read_option(%i[pre number?], true)
   end
 
   def pre_bumps
-    read_option([:pre, :bumps], :minor)
+    read_option(%i[pre bumps], :minor)
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def bump_pre
-    unless pre_numeric?
-      return self
-    end
+    return self unless pre_numeric?
 
     version = @version.clone
 
@@ -130,6 +132,8 @@ class Version
 
     Version.new(version.to_s, @options)
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def bump_component(type)
     version = @version.clone
@@ -138,3 +142,4 @@ class Version
     Version.new(version.to_s, @options)
   end
 end
+# rubocop:enable Metrics/ClassLength
