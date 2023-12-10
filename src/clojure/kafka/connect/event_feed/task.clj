@@ -7,16 +7,17 @@
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.config :as efc]
    [kafka.connect.event-feed.version :as efv]
-   [kafka.connect.event-feed.events :as efe]))
+   [kafka.connect.event-feed.events :as efe])
+  (:import [org.apache.kafka.connect.source SourceTaskContext]))
 
 (def default-partition {:partition "default"})
 
-(defn context-offset-map [context]
+(defn context-offset-map [^SourceTaskContext context]
   (efu/java-data->clojure-data
     (.offset (.offsetStorageReader context)
       (efu/clojure-data->java-data default-partition))))
 
-(defn context-config [context]
+(defn context-config [^SourceTaskContext context]
   (efc/configuration (.configs context)))
 
 (defn state [state-atom]
@@ -37,7 +38,7 @@
 (def five-minutes-in-ms (* 5 60 1000))
 (defn cache [state-atom] (:cache @state-atom))
 
-(defn initialize [state-atom context]
+(defn initialize [state-atom ^SourceTaskContext context]
   (let [offset-map (context-offset-map context)
         offset (:offset offset-map)]
     (log/infof "EventFeedSourceTask[config: %s] initializing with offset: %s..."

@@ -17,7 +17,7 @@
 
     (map? x)
     (reduce
-      (fn [map [k v]]
+      (fn [^Map map [k v]]
         (doto map
           (.put
             (clojure-data->java-data k)

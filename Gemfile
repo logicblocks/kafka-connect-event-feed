@@ -3,9 +3,9 @@
 source 'https://rubygems.org'
 
 gem 'confidante'
-gem 'edn', '~> 1.1'
-gem 'git', '~> 1.9'
-gem 'mime-types', '~> 3.3'
+gem 'edn'
+gem 'git'
+gem 'mime-types'
 gem 'rake'
 gem 'rake_circle_ci'
 gem 'rake_docker'

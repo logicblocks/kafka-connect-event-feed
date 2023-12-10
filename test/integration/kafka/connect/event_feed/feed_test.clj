@@ -265,15 +265,15 @@
 
         topic-name :events
 
-        event-resource-1-offset (td/random-uuid)
+        event-resource-1-offset (td/random-uuid-string)
         event-resource-1 (tr/event-resource wiremock-url
                            {:type    :event-type-1
                             :payload {:offset event-resource-1-offset}})
-        event-resource-2-offset (td/random-uuid)
+        event-resource-2-offset (td/random-uuid-string)
         event-resource-2 (tr/event-resource wiremock-url
                            {:type    :event-type-2
                             :payload {:offset event-resource-2-offset}})
-        event-resource-3-offset (td/random-uuid)
+        event-resource-3-offset (td/random-uuid-string)
         event-resource-3 (tr/event-resource wiremock-url
                            {:type    :event-type-3
                             :payload {:offset event-resource-3-offset}})]
@@ -315,15 +315,15 @@
         per-page-parameter-name :pick
         events-per-page 2
 
-        event-resource-1-id (td/random-uuid)
+        event-resource-1-id (td/random-uuid-string)
         event-resource-1 (tr/event-resource wiremock-url
                            {:id   event-resource-1-id
                             :type :event-type-1})
-        event-resource-2-id (td/random-uuid)
+        event-resource-2-id (td/random-uuid-string)
         event-resource-2 (tr/event-resource wiremock-url
                            {:id   event-resource-2-id
                             :type :event-type-2})
-        event-resource-3-id (td/random-uuid)
+        event-resource-3-id (td/random-uuid-string)
         event-resource-3 (tr/event-resource wiremock-url
                            {:id   event-resource-3-id
                             :type :event-type-3})]
@@ -384,15 +384,15 @@
         since-parameter-name :after
         events-per-page 2
 
-        event-resource-1-id (td/random-uuid)
+        event-resource-1-id (td/random-uuid-string)
         event-resource-1 (tr/event-resource wiremock-url
                            {:id   event-resource-1-id
                             :type :event-type-1})
-        event-resource-2-id (td/random-uuid)
+        event-resource-2-id (td/random-uuid-string)
         event-resource-2 (tr/event-resource wiremock-url
                            {:id   event-resource-2-id
                             :type :event-type-2})
-        event-resource-3-id (td/random-uuid)
+        event-resource-3-id (td/random-uuid-string)
         event-resource-3 (tr/event-resource wiremock-url
                            {:id   event-resource-3-id
                             :type :event-type-3})]
@@ -455,15 +455,15 @@
         discovery-events-link-name :eventfeed
         events-per-page 2
 
-        event-resource-1-id (td/random-uuid)
+        event-resource-1-id (td/random-uuid-string)
         event-resource-1 (tr/event-resource wiremock-url
                            {:id   event-resource-1-id
                             :type :event-type-1})
-        event-resource-2-id (td/random-uuid)
+        event-resource-2-id (td/random-uuid-string)
         event-resource-2 (tr/event-resource wiremock-url
                            {:id   event-resource-2-id
                             :type :event-type-2})
-        event-resource-3-id (td/random-uuid)
+        event-resource-3-id (td/random-uuid-string)
         event-resource-3 (tr/event-resource wiremock-url
                            {:id   event-resource-3-id
                             :type :event-type-3})]
@@ -519,31 +519,31 @@
         events-per-page 3
         max-events-per-poll 4
 
-        event-resource-1-id (td/random-uuid)
+        event-resource-1-id (td/random-uuid-string)
         event-resource-1 (tr/event-resource wiremock-url
                            {:id   event-resource-1-id
                             :type :event-type-1})
-        event-resource-2-id (td/random-uuid)
+        event-resource-2-id (td/random-uuid-string)
         event-resource-2 (tr/event-resource wiremock-url
                            {:id   event-resource-2-id
                             :type :event-type-2})
-        event-resource-3-id (td/random-uuid)
+        event-resource-3-id (td/random-uuid-string)
         event-resource-3 (tr/event-resource wiremock-url
                            {:id   event-resource-3-id
                             :type :event-type-3})
-        event-resource-4-id (td/random-uuid)
+        event-resource-4-id (td/random-uuid-string)
         event-resource-4 (tr/event-resource wiremock-url
                            {:id   event-resource-4-id
                             :type :event-type-4})
-        event-resource-5-id (td/random-uuid)
+        event-resource-5-id (td/random-uuid-string)
         event-resource-5 (tr/event-resource wiremock-url
                            {:id   event-resource-5-id
                             :type :event-type-5})
-        event-resource-6-id (td/random-uuid)
+        event-resource-6-id (td/random-uuid-string)
         event-resource-6 (tr/event-resource wiremock-url
                            {:id   event-resource-6-id
                             :type :event-type-6})
-        event-resource-7-id (td/random-uuid)
+        event-resource-7-id (td/random-uuid-string)
         event-resource-7 (tr/event-resource wiremock-url
                            {:id   event-resource-7-id
                             :type :event-type-7})]

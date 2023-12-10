@@ -1,15 +1,14 @@
 (ns kafka.connect.client.core
   (:require
-   [clojure.walk :as w]
-
-   [kafka.connect.event-feed.utils :as efu])
+   [clojure.walk :as w])
   (:import
    [java.util HashMap Map]
    [org.sourcelab.kafka.connect.apiclient
     Configuration
     KafkaConnectClient]
    [org.sourcelab.kafka.connect.apiclient.request.dto
-    NewConnectorDefinition Task Task$TaskId]))
+    NewConnectorDefinition
+    Task]))
 
 (defn clojure-value->property-value [x]
   (cond
@@ -41,7 +40,7 @@
   (.getConnectorTasks client (name connector-name)))
 
 (defn restart-connector-task
-  [^KafkaConnectClient client connector-name task]
+  [^KafkaConnectClient client connector-name ^Task task]
   (.restartConnectorTask
     client
     (name connector-name)

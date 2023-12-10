@@ -6,7 +6,9 @@
    [kafka.testing.broker :as ktb]
    [kafka.connect.event-feed.utils :as efu]
    [kafka.connect.event-feed.test.data :as data])
-  (:import [java.time Duration]))
+  (:import
+   [java.time Duration]
+   [org.apache.kafka.clients.consumer KafkaConsumer]))
 
 (defn consumer
   [kafka topic-name &
@@ -18,7 +20,7 @@
       {:auto.offset.reset        :earliest
        :allow.auto.create.topics false
        :bootstrap.servers        (ktb/bootstrap-servers kafka)
-       :group.id                 (data/random-uuid)})
+       :group.id                 (data/random-uuid-string)})
     [{:topic-name  (name topic-name)
       :key-serde   (or key-serde (json-serdes/serde))
       :value-serde (or value-serde (json-serdes/serde))}]))
@@ -37,9 +39,10 @@
       :or   {interval-ms     100
              max-attempts    100
              poll-timeout-ms 250}}]
-  (with-open [consumer (consumer kafka topic-name
-                         :key-serde key-serde
-                         :value-serde value-serde)]
+  (with-open [^KafkaConsumer consumer
+              (consumer kafka topic-name
+                :key-serde key-serde
+                :value-serde value-serde)]
     (loop [attempt 0]
       (if (= attempt max-attempts)
         (throw (IllegalStateException.
@@ -65,9 +68,10 @@
       :or   {interval-ms     100
              max-attempts    100
              poll-timeout-ms 250}}]
-  (with-open [consumer (consumer kafka topic-name
-                         :key-serde key-serde
-                         :value-serde value-serde)]
+  (with-open [^KafkaConsumer consumer
+              (consumer kafka topic-name
+                :key-serde key-serde
+                :value-serde value-serde)]
     (loop [attempt 0
            messages []]
       (if (= attempt max-attempts)

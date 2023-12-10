@@ -5,54 +5,54 @@
   :license {:name "The MIT License"
             :url  "https://opensource.org/licenses/MIT"}
 
-  :plugins [[lein-cloverage "1.1.2"]
+  :plugins [[lein-cloverage "1.2.4"]
             [lein-shell "0.5.0"]
-            [lein-ancient "0.6.15"]
+            [lein-ancient "0.7.0"]
             [lein-changelog "0.3.2"]
             [lein-cprint "1.3.3"]
-            [lein-eftest "0.5.9"]
-            [lein-codox "0.10.7"]
-            [lein-cljfmt "0.6.7"]
+            [lein-eftest "0.6.0"]
+            [lein-codox "0.10.8"]
+            [lein-cljfmt "0.9.2"]
             [lein-kibit "0.1.8"]
             [lein-bikeshed "0.5.2"]
             [lein-ver "1.1.0"]
-            [jonase/eastwood "0.3.11"]]
+            [jonase/eastwood "1.4.0"]]
 
-  :dependencies [[org.clojure/clojure "1.10.3"]
-                 [org.clojure/tools.logging "1.1.0"]
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [org.clojure/tools.logging "1.2.4"]
                  [org.clojure/core.cache "1.0.225"]
 
-                 [halboy "6.0.0"]
-                 [json-path "2.1.0"]]
+                 [io.logicblocks/halboy "6.0.0"]
+                 [json-path "2.2.0"]]
 
   :profiles
   {:provided
-   {:dependencies [[org.apache.kafka/connect-api "2.8.0"]]}
+   {:dependencies [[org.apache.kafka/connect-api "3.6.1"]]}
 
    :shared
+   ^{:pom-scope :test}
    [:provided {:dependencies
-               [[org.clojure/test.check "1.1.0"]
+               [[org.clojure/test.check "1.1.1"]
 
                 [org.slf4j/jcl-over-slf4j "1.7.30"]
                 [org.slf4j/jul-to-slf4j "1.7.30"]
                 [org.slf4j/log4j-over-slf4j "1.7.30"]
                 [ch.qos.logback/logback-classic "1.2.3"]
 
-                [nrepl "0.8.3"]
-                [eftest "0.5.9"]
+                [nrepl "1.1.0"]
+                [eftest "0.6.0"]
 
-                [halboy "6.0.0"
-                 :exclusions [cheshire
-                              org.clojure/core.cache]]
+                [io.logicblocks/halboy "6.0.0"]
 
-                [camel-snake-kebab "0.4.2"]
-                [uritemplate-clj "1.3.0"]
+                [camel-snake-kebab "0.4.3"]
+                [uritemplate-clj "1.3.1"]
                 [org.bovinegenius/exploding-fish "0.3.6"]]
 
                :resource-paths
                ["test-resources"]}]
 
    :unit
+   ^{:pom-scope :test}
    [:shared {:dependencies
              [[http-kit.fake "0.2.2"]]
 
@@ -64,24 +64,30 @@
              {:multithread? false}}]
 
    :integration
+   ^{:pom-scope :test}
    [:shared {:dependencies
-             [[kelveden/clj-wiremock "1.7.0"
+             [[kelveden/clj-wiremock "1.8.0"
                :exclusions [com.fasterxml.jackson.core/jackson-annotations
                             net.sf.jopt-simple/jopt-simple
                             org.apache.commons/commons-lang3
                             org.apache.httpcomponents/httpcore
+                            org.eclipse.jetty/jetty-proxy
                             org.eclipse.jetty/jetty-server
                             org.eclipse.jetty/jetty-servlet
                             org.eclipse.jetty/jetty-servlets
+                            org.eclipse.jetty/jetty-webapp
                             riddley]]
 
               [org.javassist/javassist "3.26.0-GA"]
 
-              [io.logicblocks/kafka.testing "0.0.2"]
+              [io.logicblocks/kafka.testing "0.0.3-RC5"]
 
-              [fundingcircle/jackdaw "0.8.0"
-               :exclusions [org.apache.kafka/kafka-clients]]
-              [org.sourcelab/kafka-connect-client "4.0.0"]]
+              [org.apache.kafka/kafka-clients "3.6.1"]
+              [org.apache.kafka/kafka-streams "3.6.1"]
+              [org.apache.kafka/kafka-streams-test-utils "3.6.1"]
+
+              [fundingcircle/jackdaw "0.9.12"]
+              [org.sourcelab/kafka-connect-client "4.0.3"]]
 
              :test-paths
              ^:replace ["test/shared"
@@ -106,6 +112,7 @@
      ["vcs" "commit" "Pre-release version %s [skip ci]"]
      ["vcs" "tag"]
      ["deploy"]]}
+
    :release
    {:release-tasks
     [["shell" "git" "diff" "--exit-code"]

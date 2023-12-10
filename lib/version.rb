@@ -83,7 +83,7 @@ class Version
   def read_option(path, default)
     branch = path[0...-1]
     leaf = path[-1]
-    map = branch.inject(@options) { |acc, step| (acc[step] || {}) }
+    map = branch.inject(@options) { |acc, step| acc[step] || {} }
     map[leaf] || default
   end
 
